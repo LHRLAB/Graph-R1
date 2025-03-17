@@ -174,3 +174,5 @@ cython_debug/
 outputs/
 checkpoints/
 wandb/
+datasets/
+new_datasets/
