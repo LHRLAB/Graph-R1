@@ -24,4 +24,10 @@ python to_index.py --data_source 2wikimultihopqa
 ```bash
 bash run_grpo_2wikimultihopqa.sh
 nohup bash run_grpo_2wikimultihopqa.sh > result_grpo_2wikimultihopqa.log 2>&1 &
+
+bash run_rpp_2wikimultihopqa.sh
+nohup bash run_rpp_2wikimultihopqa.sh > result_rpp_2wikimultihopqa.log 2>&1 &
+
+bash run_ppo_2wikimultihopqa.sh
+nohup bash run_ppo_2wikimultihopqa.sh > result_ppo_2wikimultihopqa.log 2>&1 &
 ```
