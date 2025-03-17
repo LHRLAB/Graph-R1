@@ -102,7 +102,7 @@ def main(config):
 
 
 def run_ppo(config, compute_score=None):
-    ray.init(runtime_env={"env_vars": {"RAY_DEBUG_POST_MORTEM": "1"}})
+    # ray.init(runtime_env={"env_vars": {"RAY_DEBUG_POST_MORTEM": "1"}})
     if not ray.is_initialized():
         # this is for local ray cluster
         ray.init(runtime_env={'env_vars': {'TOKENIZERS_PARALLELISM': 'true', 'NCCL_DEBUG': 'WARN'}})
@@ -112,7 +112,7 @@ def run_ppo(config, compute_score=None):
 
 @ray.remote(num_cpus=1)  # please make sure main_task is not scheduled on head
 def main_task(config, compute_score=None):
-    breakpoint()
+    # breakpoint()
     from verl.utils.fs import copy_to_local
     # print initial config
     from pprint import pprint
