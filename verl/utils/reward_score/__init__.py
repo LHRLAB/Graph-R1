@@ -33,9 +33,18 @@ def _default_compute_score_format(data_source, solution_str, extra_info=None):
     else:
         return float(res[0])
     
-def _default_compute_score_answer(data_source, solution_str, ground_truth, extra_info=None):
+def _default_compute_score_answer_em(data_source, solution_str, ground_truth, extra_info=None):
     from . import qa_em_and_format
     res = qa_em_and_format.compute_score_em(solution_str, ground_truth)
+    
+    if isinstance(res, (int, float, bool)):
+        return float(res)
+    else:
+        return float(res[0])
+    
+def _default_compute_score_answer_f1(data_source, solution_str, ground_truth, extra_info=None):
+    from . import qa_em_and_format
+    res = qa_em_and_format.compute_score_f1(solution_str, ground_truth)
     
     if isinstance(res, (int, float, bool)):
         return float(res)

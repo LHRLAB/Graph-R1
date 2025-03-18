@@ -9,8 +9,7 @@ pip3 install flash-attn --no-build-isolation
 pip3 install -e .
 # pip install debugpy==1.8.0
 # pip install "ray[default]" debugpy
-# pip3 install FlagEmbedding
-# pip3 install faiss-cpu
+pip install -r requirements.txt
 ```
 
 ### Quick Start: Graph-R1 on 2WikiMultihopQA
@@ -20,7 +19,7 @@ python to_parquet.py --data_source 2wikimultihopqa
 python to_index.py --data_source 2wikimultihopqa
 ```
 
-#### 2. Run PPO/REINFORCE++/GRPO training with Qwen2.5-1.5B-Instruct
+#### 2. Run GRPO/REINFORCE++/PPO training with Qwen2.5-1.5B-Instruct
 ```bash
 bash run_grpo_2wikimultihopqa.sh
 nohup bash run_grpo_2wikimultihopqa.sh > result_grpo_2wikimultihopqa.log 2>&1 &

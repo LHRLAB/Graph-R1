@@ -15,6 +15,7 @@
 import re
 import string
 import random
+from eval import cal_em, cal_f1
 
 def normalize_answer(s):
     def remove_articles(text):
@@ -144,13 +145,14 @@ def compute_score_answer(solution_str, ground_truth):
             # # Check for substring match within <answer>
             # elif subem_check(answer, ground_truth):
             #     answer_reward = 0.5
-            if subem_check(answer, ground_truth):
-                answer_reward = 1.0
+            # if subem_check(answer, ground_truth):
+            #     answer_reward = 1.0
+            answer_reward = cal_f1([ground_truth.tolist()],[answer])
         
         # If no match found within <answer>, check entire solution for substring match
-        if answer_reward == 0.0:
-            if subem_check(solution_str, ground_truth):
-                answer_reward = 0.2
+        # if answer_reward == 0.0:
+        #     if subem_check(solution_str, ground_truth):
+        #         answer_reward = 0.2
     except Exception as e:
         print(f"[DEBUG] Error in compute_score_answer: {e}")
         return 0.0
@@ -197,7 +199,29 @@ def compute_score_em(solution_str, ground_truth):
         answer = extract_solution(solution_str)
         if answer is None:
             return 0.0
-        return float(subem_check(answer, ground_truth))
+        return float(cal_em([ground_truth.tolist()],[answer]))
     except Exception as e:
         print(f"[DEBUG] Error in compute_score_em: {e}")
+        return 0.0
+    
+def compute_score_f1(solution_str, ground_truth):
+    """The scoring function for exact match (F1).
+
+    Args:
+        solution_str: the solution text
+        ground_truth: the ground truth
+    
+    """
+    if solution_str is None or ground_truth is None:
+        return 0.0
+    
+    try:
+        assistant_blocks = re.findall(r'<\|im_start\|>assistant\n(.*?)<\|im_end\|>', solution_str, re.DOTALL)
+        solution_str = assistant_blocks[-1]
+        answer = extract_solution(solution_str)
+        if answer is None:
+            return 0.0
+        return float(cal_f1([ground_truth.tolist()],[answer]))
+    except Exception as e:
+        print(f"[DEBUG] Error in compute_score_f1: {e}")
         return 0.0

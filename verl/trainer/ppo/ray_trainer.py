@@ -259,7 +259,8 @@ def compute_data_metrics(batch, use_critic=True):
         return_var = torch.var(valid_returns)
 
     format_scores = batch.batch['format_scores']
-    answer_scores = batch.batch['answer_scores'].float()
+    answer_f1_scores = batch.batch['answer_f1_scores'].float()
+    answer_em_scores = batch.batch['answer_em_scores'].float()
     turns = batch.batch['turns'].float()
     metrics = {
         # score
@@ -304,10 +305,15 @@ def compute_data_metrics(batch, use_critic=True):
         'critic/format_score/max': torch.max(format_scores).detach().item(),
         'critic/format_score/min': torch.min(format_scores).detach().item(),
 
+        # f1 score
+        'critic/answer_f1_score/mean': torch.mean(answer_f1_scores).detach().item(),
+        'critic/answer_f1_score/max': torch.max(answer_f1_scores).detach().item(),
+        'critic/answer_f1_score/min': torch.min(answer_f1_scores).detach().item(),
+        
         # em score
-        'critic/answer_score/mean': torch.mean(answer_scores).detach().item(),
-        'critic/answer_score/max': torch.max(answer_scores).detach().item(),
-        'critic/answer_score/min': torch.min(answer_scores).detach().item(),
+        'critic/answer_em_score/mean': torch.mean(answer_em_scores).detach().item(),
+        'critic/answer_em_score/max': torch.max(answer_em_scores).detach().item(),
+        'critic/answer_em_score/min': torch.min(answer_em_scores).detach().item(),
 
         # turns
         'turns/mean': torch.mean(turns).detach().item(),
@@ -776,7 +782,7 @@ class RayPPOTrainer(object):
                 
                 # evaluate using reward_function
                 try:
-                    reward_tensor, answer_lst, format_lst = self.val_reward_fn(test_batch)
+                    reward_tensor, answer_lst_f1, answer_lst_em , format_lst = self.val_reward_fn(test_batch)
                 except:
                     print(f"[Error] Something wrong with the reward function")
                     print(test_batch)
@@ -793,7 +799,8 @@ class RayPPOTrainer(object):
         data_sources = np.concatenate(data_source_lst, axis=0)
         # evaluate test_score based on data source
         data_source_reward = {}
-        data_source_answer = {}
+        data_source_answer_f1 = {}
+        data_source_answer_em = {}
         data_source_format = {}
         data_source_turns = {}
         for i in range(reward_tensor.shape[0]):
@@ -801,9 +808,12 @@ class RayPPOTrainer(object):
             if data_source not in data_source_reward:
                 data_source_reward[data_source] = []
             data_source_reward[data_source].append(reward_tensor[i].item())
-            if data_source not in data_source_answer:
-                data_source_answer[data_source] = []
-            data_source_answer[data_source].append(answer_lst[i])
+            if data_source not in data_source_answer_f1:
+                data_source_answer_f1[data_source] = []
+            data_source_answer_f1[data_source].append(answer_lst_f1[i])
+            if data_source not in data_source_answer_em:
+                data_source_answer_em[data_source] = []
+            data_source_answer_em[data_source].append(answer_lst_em[i])
             if data_source not in data_source_format:
                 data_source_format[data_source] = []
             data_source_format[data_source].append(format_lst[i])
@@ -814,8 +824,10 @@ class RayPPOTrainer(object):
         metric_dict = {}
         for data_source, rewards in data_source_reward.items():
             metric_dict[f'val/test_score/{data_source}'] = np.mean(rewards)
-        for data_source, answers in data_source_answer.items():
-            metric_dict[f'val/answer_score/{data_source}'] = np.mean(answers)
+        for data_source, answers_f1 in data_source_answer_f1.items():
+            metric_dict[f'val/answer_f1_score/{data_source}'] = np.mean(answers_f1)
+        for data_source, answers_em in data_source_answer_em.items():
+            metric_dict[f'val/answer_em_score/{data_source}'] = np.mean(answers_em)
         for data_source, formats in data_source_format.items():
             metric_dict[f'val/format_score/{data_source}'] = np.mean(formats)
         for data_source, turns in data_source_turns.items():
@@ -1142,9 +1154,10 @@ class RayPPOTrainer(object):
                             batch = batch.union(reward_tensor)
 
                         # we combine with rule-based rm
-                        reward_tensor, answer_lst, format_lst = self.reward_fn(batch)
+                        reward_tensor, answer_lst_f1, answer_lst_em, format_lst = self.reward_fn(batch)
                         batch.batch['token_level_scores'] = reward_tensor
-                        batch.batch['answer_scores'] = torch.tensor(answer_lst)
+                        batch.batch['answer_f1_scores'] = torch.tensor(answer_lst_f1)
+                        batch.batch['answer_em_scores'] = torch.tensor(answer_lst_em)
                         batch.batch['format_scores'] = torch.tensor(format_lst)
 
                         # compute rewards. apply_kl_penalty if available

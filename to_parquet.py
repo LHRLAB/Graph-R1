@@ -66,7 +66,7 @@ Output format for answer:
             question_raw = example.pop('question')
             question = instruction_following + "Question: " + question_raw
             
-            answer_raw = example.pop('golden_answers')[0]
+            answer_raw = example.pop('golden_answers')
             
             # Convert all data to string format to avoid type issues
             data = {

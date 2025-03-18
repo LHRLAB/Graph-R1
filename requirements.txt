@@ -19,3 +19,6 @@ torchdata
 transformers
 vllm<=0.6.3
 wandb
+
+FlagEmbedding
+faiss-cpu

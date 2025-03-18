@@ -23,7 +23,7 @@ import ray
 import hydra
 
 from verl import DataProto
-from verl.utils.reward_score import _default_compute_score_format, _default_compute_score_answer, _default_compute_score_format_answer
+from verl.utils.reward_score import _default_compute_score_format, _default_compute_score_answer_f1, _default_compute_score_answer_em, _default_compute_score_format_answer
 import torch
 
 class RewardManager():
@@ -42,7 +42,8 @@ class RewardManager():
             return data.batch['rm_scores']
 
         reward_tensor = torch.zeros_like(data.batch['responses'], dtype=torch.float32)
-        answer_lst = []
+        answer_lst_f1 = []
+        answer_lst_em = []
         format_lst = []
 
         already_print_data_sources = {}
@@ -77,10 +78,12 @@ class RewardManager():
             data_source = data_item.non_tensor_batch['data_source']
 
             score = _default_compute_score_format_answer(data_source=data_source, solution_str=sequences_str, ground_truth=ground_truth)
-            answer_score = _default_compute_score_answer(data_source=data_source, solution_str=sequences_str, ground_truth=ground_truth)
+            answer_f1_score = _default_compute_score_answer_f1(data_source=data_source, solution_str=sequences_str, ground_truth=ground_truth)
+            answer_em_score = _default_compute_score_answer_em(data_source=data_source, solution_str=sequences_str, ground_truth=ground_truth)
             format_score = _default_compute_score_format(data_source=data_source, solution_str=sequences_str)
 
-            answer_lst.append(answer_score)
+            answer_lst_f1.append(answer_f1_score)
+            answer_lst_em.append(answer_em_score)
             format_lst.append(format_score)
 
             reward_tensor[i, valid_response_length - 1] = score
@@ -91,7 +94,7 @@ class RewardManager():
             if already_print_data_sources[data_source] < self.num_examine:
                 already_print_data_sources[data_source] += 1
 
-        return reward_tensor, answer_lst, format_lst
+        return reward_tensor, answer_lst_f1, answer_lst_em, format_lst
     
 
 
