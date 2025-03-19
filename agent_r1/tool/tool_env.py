@@ -29,7 +29,7 @@ def step(env: 'ToolEnv', action_text: str):
     action = env.extract_tool_call(action_text)
     
     if action == env.INVALID_ACTION:
-        result = "Invalid tool call format. Please use <tool_call>{\"name\": \"tool_name\", \"arguments\": {params_json}}</tool_call> format."
+        result = "Invalid tool call format. Please use <query>{\"query\": \"statement\"}</query> format."
         env._update_tracking_variables(
             response=action_text,
             action=action,
@@ -137,7 +137,7 @@ def step_batch(envs: List['ToolEnv'], action_texts: List[str]):
         
         # Handle invalid actions
         if action == env.INVALID_ACTION:
-            result = "Invalid tool call format. Please use <tool_call>{\"name\": \"tool_name\", \"arguments\": {params_json}}</tool_call> format."
+            result = "Invalid tool call format. Please use <query>{\"query\": \"statement\"}</query> format."
             env.steps_taken += 1
             env._update_tracking_variables(
                 response=action_text,
@@ -310,21 +310,11 @@ class ToolEnv:
         self.reset_tracking_variables()
 
     def tools_format_func(self) -> str:
-        template = """# Tools
-
-You may call one or more functions to assist with the user query.
-
-You are provided with function signatures within <tools></tools> XML tags:
-<tools>
-{tools}
-</tools>
-
-For each function call, return a json object with function name and arguments within <tool_call></tool_call> XML tags:
-<tool_call>
-{{"name": <function-name>, "arguments": <args-json-object>}}
-</tool_call>"""
-        tools = "\n".join([f"{json.dumps(tool.get_description(), ensure_ascii=False)}" for tool in self.tools])
-        return template.format(tools=tools)
+        template = """For each query, return a json object with query statement within <query></query> tags:
+<query>
+{"query": <statement-to-search>}
+</query>"""
+        return template
         
     def reset_tracking_variables(self):
         """Reset tracking variables"""
@@ -386,8 +376,7 @@ For each function call, return a json object with function name and arguments wi
         Returns:
             Dictionary containing tool name and parameters
         """
-        # Regular expression to extract tool call <tool_call>{"name": "tool_name", "arguments": {...}}</tool_call>
-        tool_call_pattern = r'<tool_call>(.*?)</tool_call>'
+        tool_call_pattern = r'<query>(.*?)</query>'
         
         tool_call_match = re.search(tool_call_pattern, text, re.DOTALL)
         
@@ -396,18 +385,14 @@ For each function call, return a json object with function name and arguments wi
         
         try:
             tool_call_json = tool_call_match.group(1).strip()
-            # Handle potentially non-standard JSON format
-            # tool_call_json = tool_call_json.replace("'", '"')
             tool_call_data = json.loads(tool_call_json)
             
-            # Extract tool name and arguments
-            if "name" not in tool_call_data:
+            if "query" not in tool_call_data:
                 return self.INVALID_ACTION
-                
-            tool_name = tool_call_data["name"]
-            tool_args = tool_call_data.get("arguments", {})
             
-            return {"tool": tool_name, "args": tool_args}
+            statement = {"query": str(tool_call_data["query"])}
+            
+            return {"tool": "search", "args": statement}
         except json.JSONDecodeError:
             return self.INVALID_ACTION
         except Exception:

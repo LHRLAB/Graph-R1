@@ -182,16 +182,16 @@ trainer:
 tool:
   max_turns: 10
   use_batch_tool_calls: True
-  tool_call_start: <tool_call>
-  tool_call_end: </tool_call>
-  tool_response_start: <tool_response>
-  tool_response_end: </tool_response>
+  tool_call_start: <query>
+  tool_call_end: </query>
+  tool_response_start: <knowledge>
+  tool_response_end: </knowledge>
   tool_chat_template_apply: False
   tool_custom_response_template: |
     <|im_start|>user
-    <tool_response>
+    <knowledge>
     {tool_response}
-    </tool_response><|im_end|>
+    </knowledge><|im_end|>
     <|im_start|>assistant
     <think>
   env: search

@@ -1230,7 +1230,7 @@ class RayPPOTrainer(object):
         """
         Create a loss mask for tool responses.
         
-        This function identifies all <tool_response> and </tool_response> tags in the responses
+        This function identifies all <knowledge> and </knowledge> tags in the responses
         and masks them (sets loss_mask to 0) to exclude them from policy gradient updates.
         The mask is applied to both the tags themselves and all tokens in between.
         """
@@ -1242,8 +1242,8 @@ class RayPPOTrainer(object):
         responses = [self.tokenizer.decode(resp, skip_special_tokens=False) for resp in batch.batch['responses']]
         
         # Get token IDs for the tool response tags
-        start_tag = "<|im_start|>user\n<tool_response>"
-        end_tag = "</tool_response><|im_end|>\n<|im_start|>assistant"
+        start_tag = "<|im_start|>user\n<knowledge>"
+        end_tag = "</knowledge><|im_end|>\n<|im_start|>assistant"
         
         for i, response in enumerate(responses):
             # Find positions of start and end tags

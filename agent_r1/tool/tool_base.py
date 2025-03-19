@@ -122,30 +122,11 @@ class Tool(ABC):
             (is_valid, error_message)
         """
         # Check if args is a Dict
-        if not isinstance(args, dict):
+        if not isinstance(args, Dict):
             return False, "Arguments must be a dictionary"
-
-        # Check required parameters
-        required_params = self.parameters.get("required", [])
-        for param in required_params:
-            if param not in args:
-                return False, f"Missing required parameter: {param}"
+        if "query" not in args:
+                return False, f"Missing required parameter: query"
         
-        # Check parameter types
-        properties = self.parameters.get("properties", {})
-        for param_name, param_value in args.items():
-            if param_name in properties:
-                param_schema = properties[param_name]
-                
-                # Check type
-                param_type = param_schema.get("type")
-                if param_type and not self._check_type(param_value, param_type):
-                    return False, f"Parameter {param_name} has incorrect type, should be {param_type}"
-                
-                # Check enum values
-                if "enum" in param_schema and param_value not in param_schema["enum"]:
-                    valid_values = ", ".join(map(str, param_schema["enum"]))
-                    return False, f"Parameter {param_name} has invalid value, should be one of: {valid_values}"
         
         return True, "Parameters valid"
     

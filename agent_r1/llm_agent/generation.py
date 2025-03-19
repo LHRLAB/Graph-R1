@@ -28,10 +28,10 @@ class ToolGenerationConfig:
     num_gpus: int
     # use_parallel_tool_calls: bool = False
     use_batch_tool_calls: bool = False  # New option for batch execution
-    tool_call_start: str = "<tool_call>"
-    tool_call_end: str = "</tool_call>"
-    tool_response_start: str = "<tool_response>"
-    tool_response_end: str = "</tool_response>"
+    tool_call_start: str = "<query>"
+    tool_call_end: str = "</query>"
+    tool_response_start: str = "<knowledge>"
+    tool_response_end: str = "</knowledge>"
     tool_custom_response_template: str = ""
     
 class ToolGenerationManager:
@@ -77,19 +77,13 @@ class ToolGenerationManager:
             List[str]: Processed responses with only first tool call preserved
         """
         def process_single_response(resp):
-            # Look for tool call pattern: <tool_call>tool_name(args)</tool_call>
-            tool_pattern = r'<tool_call>(.*?)</tool_call>'
+            tool_pattern = r'<query>(.*?)</query>'
             match = re.search(tool_pattern, resp, re.DOTALL)
             
             if not match:
                 return resp + self.tokenizer.eos_token, False  # No tool call found
             
             resp = resp.split(self.config.tool_call_end)[0] + self.config.tool_call_end
-            # tool_content = match.group(0)
-            
-            # Replace all subsequent answer tag pairs with their content
-            # rest_of_string = resp[match.end():]
-            # cleaned_rest = re.sub(r'<tool_call>(.*?)</tool_call>', r'\1', rest_of_string, flags=re.DOTALL)
             
             return resp + self.tokenizer.eos_token, True
         

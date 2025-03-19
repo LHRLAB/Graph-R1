@@ -39,17 +39,17 @@ if __name__ == '__main__':
     dev_dataset = datasets.Dataset.from_list(dev_data)
     test_dataset = datasets.Dataset.from_list(test_data)
     
-    instruction_following = """Answer the given question. You can use the tools provided to you to answer the question. You can use the tool as many times as you want.
-You must first conduct reasoning inside <think>...</think>. If you need to use the tool, you can use the tool call <tool_call>...</tool_call> to call the tool after <think>...</think>.
+    instruction_following = """Answer the given question. You can query from knowledge base provided to you to answer the question. You can query knowledge as many times as you want.
+You must first conduct reasoning inside <think>...</think>. If you need to query knowledge, you can set a query statement between <query>...</query> to query from knowledge base after <think>...</think>.
 When you have the final answer, you can output the answer inside <answer>...</answer>.
 
 Output format for tool call:
 <think>
 ...
 </think>
-<tool_call>
+<query>
 ...
-</tool_call>
+</query>
 
 Output format for answer:
 <think>

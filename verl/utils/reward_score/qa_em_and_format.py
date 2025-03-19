@@ -81,8 +81,8 @@ def compute_score_format(solution_str):
     
     try:
         # Perfect format match for the new structure
-        # First <|im_start|>assistant should have <think> and possibly <tool_call>
-        # Then <|im_start|>tool with <tool_response> (can repeat with assistant/tool pairs)
+        # First <|im_start|>assistant should have <think> and possibly <query>
+        # Then <|im_start|>tool with <knowledge> (can repeat with assistant/tool pairs)
         # Final <|im_start|>assistant with the answer and <|im_end|>
         
         # Check for basic structure with <|im_start|>assistant and <|im_end|> tags
@@ -97,9 +97,8 @@ def compute_score_format(solution_str):
         # Perfect format requires at least one assistant block and matching tool blocks if tool calls exist
         # Check first assistant block contains <think> tags
         for i, assistant_block in enumerate(assistant_blocks[:-1]):
-            if assistant_block.count('<think>') == 1 and assistant_block.count('</think>') == 1 and assistant_block.count('<tool_call>') == 1 and assistant_block.count('</tool_call>') == 1:
-                think_match = re.search(r'^<think>(.*?)</think>\n<tool_call>(.*?)</tool_call>$', assistant_block, re.DOTALL)
-                # soft_think_match = re.search(r'<think>(.*?)</think>(.*?)<tool_call>(.*?)</tool_call>', assistant_block, re.DOTALL)
+            if assistant_block.count('<think>') == 1 and assistant_block.count('</think>') == 1 and assistant_block.count('<query>') == 1 and assistant_block.count('</query>') == 1:
+                think_match = re.search(r'^<think>(.*?)</think>\n<query>(.*?)</query>$', assistant_block, re.DOTALL)
                 if think_match:
                     # format_reward += 0.2 * (0.8 ** i)
                     format_reward += 0.5
