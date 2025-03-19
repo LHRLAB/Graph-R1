@@ -1,7 +1,7 @@
 export VLLM_ATTENTION_BACKEND=XFORMERS
 export BASE_MODEL='/mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.5B-Instruct'
 export PROJECT_NAME='2wikimultihopqa_qwen2.5-1.5b-instruct'
-export EXPERIMENT_NAME=reinforce_plus_plus
+export EXPERIMENT_NAME=rpp
 export HYDRA_FULL_ERROR=1
 export CUDA_LAUNCH_BLOCKING=1
 set -x
