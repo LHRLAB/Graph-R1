@@ -7,7 +7,7 @@ os.environ["OPENAI_API_KEY"] = open("openai_api_key.txt").read().strip()
 
 def insert_knowledge(rag, unique_contexts):
     retries = 0
-    max_retries = 10
+    max_retries = 50
     while retries < max_retries:
         try:
             rag.insert(unique_contexts)
@@ -23,7 +23,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--cls", type=str, default="2wikimultihopqa")
 args = parser.parse_args()
 
-rag = HyperGraphRAG(working_dir=f"expr/HyperGraphRAG/{args.cls}")
+rag = HyperGraphRAG(working_dir=f"expr/{args.cls}")
 
 unique_contexts = []
 

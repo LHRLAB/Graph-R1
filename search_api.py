@@ -9,31 +9,26 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_source', default='2wikimultihopqa')
-parser.add_argument('--method', default="HyperGraphRAG")
 args = parser.parse_args()
 data_source = args.data_source
-method = args.method
 
 # 创建 FastAPI 实例
 app = FastAPI(title="Search API", description="An API for document retrieval using FAISS and FlagEmbedding.")
 
-if method == "StandardRAG":
-    # 加载 FAISS 索引和 FlagEmbedding 模型
-    print(f"[DEBUG] LOADING EMBEDDINGS")
-    index = faiss.read_index(f"datasets/{data_source}/index.bin")
-    model = FlagAutoModel.from_finetuned(
-        'BAAI/bge-large-en-v1.5',
-        query_instruction_for_retrieval="Represent this sentence for searching relevant passages: ",
-        devices="cpu",
-    )
-    corpus = []
-    with open(f"datasets/{data_source}/corpus.jsonl", "r") as f:
-        for line in f:
-            data = json.loads(line)
-            corpus.append(data["contents"])
-    print("[DEBUG] EMBEDDINGS LOADED")
-elif method == "HyperGraphRAG":
-    pass
+# 加载 FAISS 索引和 FlagEmbedding 模型
+print(f"[DEBUG] LOADING EMBEDDINGS")
+index = faiss.read_index(f"datasets/{data_source}/index.bin")
+model = FlagAutoModel.from_finetuned(
+    'BAAI/bge-large-en-v1.5',
+    query_instruction_for_retrieval="Represent this sentence for searching relevant passages: ",
+    devices="cpu",
+)
+corpus = []
+with open(f"datasets/{data_source}/corpus.jsonl", "r") as f:
+    for line in f:
+        data = json.loads(line)
+        corpus.append(data["contents"])
+print("[DEBUG] EMBEDDINGS LOADED")
 
 def _format_results(results: List) -> str:
     """
@@ -53,12 +48,9 @@ def _format_results(results: List) -> str:
     return json.dumps({"results": results_list})
 
 def queries_to_results(queries: List[str]) -> List[str]:
-    if method == "StandardRAG":
-        embeddings = model.encode_queries(queries)
-        _, ids = index.search(embeddings, 5)  # 每个查询返回 5 个结果
-        results_str = [_format_results(ids[i]) for i in range(len(ids))]
-    elif method == "HyperGraphRAG":
-        results_str = ["HyperGraphRAG is not implemented yet."]
+    embeddings = model.encode_queries(queries)
+    _, ids = index.search(embeddings, 5)  # 每个查询返回 5 个结果
+    results_str = [_format_results(ids[i]) for i in range(len(ids))]
     return results_str
 
 class SearchRequest(BaseModel):

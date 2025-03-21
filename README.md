@@ -13,16 +13,33 @@ pip install -r requirements.txt
 ```
 
 ### Quick Start: Graph-R1 on 2WikiMultihopQA
-#### 1. Preprocess 2WikiMultihopQA dataset and build search index
+#### 1. Preprocess 2WikiMultihopQA dataset
 ```bash
 python to_parquet.py --data_source 2wikimultihopqa
-python to_index.py --data_source 2wikimultihopqa
 ```
 
-#### 2. Set up search server
+#### 2. Set up search server at 8001 port
+For HyperGraphRA, you can come to the HyperGraphRAG directory at ```graphrag/HyperGraphRAG```.
 ```bash
-nohup python -u search_api.py --data_source 2wikimultihopqa > result_search_api_2wikimultihopqa.log 2>&1 &
+cd graphrag/HyperGraphRAG
 ```
+Follow the instructions in the [README_HyperGraphRAG](graphrag/HyperGraphRAG/README.md) file to set up the search server then back to main directory.
+```bash
+cd ../..
+```
+
+- Note: 
+1. The search server is set up on port 8001 by default. 
+2. Other GraphRAG methods are also available at [README_GraphRAG](graphrag/GraphRAG/README.md), [README_LightRAG](graphrag/LightRAG/README.md), [README_PathRAG](graphrag/PathRAG/README.md), and [README_HippoRAG2](graphrag/HippoRAG2/README.md).
+3. If you want to use StandardRAG, you can first index the knowledge:
+    ```bash
+    python to_index.py --data_source 2wikimultihopqa
+    ```
+    and then run the search server as follows:
+    ```bash
+    nohup python -u search_api.py --data_source 2wikimultihopqa > result_search_api_2wikimultihopqa.log 2>&1 &
+    ```
+4. You can only run one search server at a time. If you want to switch between different search servers, you need to close the current search server first.
 
 #### 3. Run GRPO/REINFORCE++/PPO training with Qwen2.5-1.5B-Instruct
 ```bash
@@ -40,5 +57,3 @@ nohup bash run_ppo_2wikimultihopqa.sh > result_ppo_2wikimultihopqa.log 2>&1 &
 ```bash
 fuser -k 8001/tcp
 ```
-
-

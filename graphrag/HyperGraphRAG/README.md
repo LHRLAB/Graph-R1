@@ -12,13 +12,20 @@ You need add ``openai_api_key.txt`` in the root directory, which contains the Op
 ## HyperGraphRAG Process
 
 ### 2WikiMultiHopQA
-#### HyperGraph Construction
+#### 1.HyperGraph Construction
 For the extracted contexts, we insert them into the HyperGraphRAG system.
 ```bash
 nohup python script_insert.py --cls 2wikimultihopqa > result_2wikimultihopqa_insert.log 2>&1 &
 ```
-#### HyperGraph-Guided Generation
+
+#### 2.Test HyperGraphRAG
 For the queries collected, we will query HyperGraphRAG.
 ```bash
-nohup python script_query.py --cls hypertension --level easy >> result_hypertension_easy_query.log 2>&1 &
+python script_quickquery_batch.py --data_source 2wikimultihopqa
 ```
+
+#### 3.Set up search server
+```bash
+nohup python -u search_api.py --data_source 2wikimultihopqa > result_search_api_hypergraphrag_2wikimultihopqa.log 2>&1 &
+```
+

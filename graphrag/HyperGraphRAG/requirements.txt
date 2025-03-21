@@ -27,3 +27,5 @@ xxhash
 jsonlines
 nltk
 PyPDF2
+fastapi
+uvicorn
