@@ -176,3 +176,7 @@ checkpoints/
 wandb/
 datasets/
 new_datasets/
+
+*openai_api_key.txt
+*.log
+graphrag/HyperGraphRAG/expr/*

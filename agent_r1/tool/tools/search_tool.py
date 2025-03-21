@@ -12,6 +12,7 @@ from agent_r1.tool.tool_base import Tool
 import faiss
 from FlagEmbedding import FlagAutoModel
 import json
+import requests
 
 class SearchTool(Tool):
     """
@@ -43,20 +44,7 @@ class SearchTool(Tool):
         }
         
         super().__init__(name, description, parameters)
-        print(f"[DEBUG] EMBEDDINGS LOADING")
-        self.index = faiss.read_index("datasets/2wikimultihopqa/index.bin")
-        self.model = FlagAutoModel.from_finetuned(
-            'BAAI/bge-large-en-v1.5',
-            query_instruction_for_retrieval="Represent this sentence for searching relevant passages: ",
-            devices="cpu",   # if not specified, will use all available gpus or cpu when no gpu available
-        )
-        self.corpus = []
-        with open("datasets/2wikimultihopqa/corpus.jsonl","r") as f:
-            for idx, line in enumerate(f):
-                data = json.loads(line)
-                self.corpus.append(data["contents"])
-        print("[DEBUG] EMBEDDINGS LOADING END")
-
+        self.search_api_url = "http://localhost:8001/search"
     
     def execute(self, args: Dict) -> str:
         """
@@ -74,27 +62,8 @@ class SearchTool(Tool):
     
     def batch_execute(self, args_list: List[Dict]) -> List[str]:
         queries = [x["query"] for x in args_list]
-        embeddings = self.model.encode_queries(queries)
-        dist, ids = self.index.search(embeddings, 5) # ids: b*5
-        results_str = [self._format_results(ids[i]) for i in range(len(ids))]
+        results_str = requests.post(self.search_api_url, json={"queries": queries}).json()
         return results_str
-
-    def _format_results(self, results: List) -> str:
-        """
-        Format search results for better readability
-        
-        Args:
-            results: List of search result List
-            
-        Returns:
-            Formatted results as a string
-        """
-        results_list = []
-        
-        for i, result in enumerate(results):
-            results_list.append(self.corpus[result])
-        
-        return json.dumps({"results": results_list})
     
     def calculate_reward(self, args: Dict, result: str) -> float:
         """

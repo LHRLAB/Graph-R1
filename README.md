@@ -19,7 +19,12 @@ python to_parquet.py --data_source 2wikimultihopqa
 python to_index.py --data_source 2wikimultihopqa
 ```
 
-#### 2. Run GRPO/REINFORCE++/PPO training with Qwen2.5-1.5B-Instruct
+#### 2. Set up search server
+```bash
+nohup python -u search_api.py --data_source 2wikimultihopqa > result_search_api_2wikimultihopqa.log 2>&1 &
+```
+
+#### 3. Run GRPO/REINFORCE++/PPO training with Qwen2.5-1.5B-Instruct
 ```bash
 bash run_grpo_2wikimultihopqa.sh
 nohup bash run_grpo_2wikimultihopqa.sh > result_grpo_2wikimultihopqa.log 2>&1 &
@@ -30,3 +35,10 @@ nohup bash run_rpp_2wikimultihopqa.sh > result_rpp_2wikimultihopqa.log 2>&1 &
 bash run_ppo_2wikimultihopqa.sh
 nohup bash run_ppo_2wikimultihopqa.sh > result_ppo_2wikimultihopqa.log 2>&1 &
 ```
+
+#### 4. Close search server 8001 port
+```bash
+fuser -k 8001/tcp
+```
+
+
