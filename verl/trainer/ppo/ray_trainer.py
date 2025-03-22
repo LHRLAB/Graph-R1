@@ -44,8 +44,8 @@ import re
 import json
 from collections import defaultdict
 
-from agent_r1.llm_agent.generation import ToolGenerationManager, ToolGenerationConfig
-from agent_r1.tool.tool_env import ToolEnv
+from agent.llm_agent.generation import ToolGenerationManager, ToolGenerationConfig
+from agent.tool.tool_env import ToolEnv
 
 WorkerType = Type[Worker]
 

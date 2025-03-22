@@ -16,8 +16,8 @@ Note that we don't combine the main with ray_trainer as ray_trainer is used by o
 """
 from verl.trainer.ppo.ray_trainer import RayPPOTrainer
 
-from agent_r1.tool import ToolEnv
-from agent_r1.tool.tools import _default_tools
+from agent.tool import ToolEnv
+from agent.tool.tools import _default_tools
 
 import ray
 import hydra

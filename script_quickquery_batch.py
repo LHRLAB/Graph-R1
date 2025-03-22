@@ -4,7 +4,10 @@ from pydantic import BaseModel
 import uvicorn
 from typing import List
 import argparse
-from graphr1 import HyperGraphRAG, QueryParam
+from graphr1 import GraphR1, QueryParam
+from transformers import AutoTokenizer, AutoModel
+from graphr1.utils import EmbeddingFunc
+from graphr1.llm import hf_embedding, hf_model_complete
 
 import os
 import asyncio
@@ -16,7 +19,7 @@ parser.add_argument('--data_source', default='2wikimultihopqa')
 args = parser.parse_args()
 data_source = args.data_source
 
-rag = HyperGraphRAG(
+rag = GraphR1(
     working_dir=f"expr/{data_source}",  
 )
 
@@ -41,17 +44,12 @@ def queries_to_results(queries: List[str]) -> List[str]:
         )
         results.append(json.dumps({"results": result["result"]}))
     return results
+########### PREDEFINE ############
 
-# 创建 FastAPI 实例
-app = FastAPI(title="Search API", description="An API for document retrieval using FAISS and FlagEmbedding.")
 
-class SearchRequest(BaseModel):
-    queries: List[str]
+with open(f'datasets/{data_source}/raw/qa_test.json', 'r') as f:
+    test_data = json.load(f)
+queries = [item['question'] for item in test_data]
 
-@app.post("/search")
-def search(request: SearchRequest):
-    results_str = queries_to_results(request.queries)
-    return results_str
-
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8001)
+results_str = queries_to_results(queries)
+print(results_str)
