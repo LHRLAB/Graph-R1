@@ -490,18 +490,18 @@ class GraphR1:
             if update_storage:
                 await self._insert_done()
 
-    def query(self, query: str, param: QueryParam = QueryParam()):
+    def query(self, query: str, param: QueryParam = QueryParam(), entity_match=None, hyperedge_match=None, chunk_match=None):
         loop = always_get_an_event_loop()
-        return loop.run_until_complete(self.aquery(query, param))
+        return loop.run_until_complete(self.aquery(query, param, entity_match, hyperedge_match, chunk_match))
 
-    async def aquery(self, query: str, param: QueryParam = QueryParam()):
+    async def aquery(self, query: str, param: QueryParam = QueryParam(), entity_match=None, hyperedge_match=None, chunk_match=None):
         if param.mode in ["hybrid"]:
             response = await kg_query(
                 query,
                 self.chunk_entity_relation_graph,
-                self.entities_vdb,
-                self.hyperedges_vdb,
-                self.text_chunks,
+                entity_match,
+                hyperedge_match,
+                chunk_match,
                 param,
                 asdict(self),
                 hashing_kv=self.llm_response_cache,

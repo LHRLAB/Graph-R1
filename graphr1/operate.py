@@ -484,9 +484,9 @@ async def extract_entities(
 async def kg_query(
     query,
     knowledge_graph_inst: BaseGraphStorage,
-    entities_vdb: BaseVectorStorage,
-    hyperedges_vdb: BaseVectorStorage,
-    text_chunks_db: BaseKVStorage[TextChunkSchema],
+    entities_vdb: list,
+    hyperedges_vdb: list,
+    text_chunks_db: list,
     query_param: QueryParam,
     global_config: dict,
     hashing_kv: BaseKVStorage = None,
@@ -749,24 +749,23 @@ async def _get_node_data(
     entities_vdb: BaseVectorStorage,
     text_chunks_db: BaseKVStorage[TextChunkSchema],
     query_param: QueryParam,
-):
-    # get similar entities
-    results = await entities_vdb.query(query, top_k=query_param.top_k)
+):  
+    results = entities_vdb
     if not len(results):
         return "", "", ""
     # get entity information
     node_datas = await asyncio.gather(
-        *[knowledge_graph_inst.get_node(r["entity_name"]) for r in results]
+        *[knowledge_graph_inst.get_node(r) for r in results]
     )
     if not all([n is not None for n in node_datas]):
         logger.warning("Some nodes are missing, maybe the storage is damaged")
 
     # get entity degree
     node_degrees = await asyncio.gather(
-        *[knowledge_graph_inst.node_degree(r["entity_name"]) for r in results]
+        *[knowledge_graph_inst.node_degree(r) for r in results]
     )
     node_datas = [
-        {**n, "entity_name": k["entity_name"], "rank": d}
+        {**n, "entity_name": k, "rank": d}
         for k, n, d in zip(results, node_datas, node_degrees)
         if n is not None
     ]  # what is this text_chunks_db doing.  dont remember it in airvx.  check the diagram.
@@ -934,14 +933,14 @@ async def _get_edge_data(
     hyperedges_vdb: BaseVectorStorage,
     text_chunks_db: BaseKVStorage[TextChunkSchema],
     query_param: QueryParam,
-):
-    results = await hyperedges_vdb.query(keywords, top_k=query_param.top_k)
+):  
+    results = hyperedges_vdb
 
     if not len(results):
         return "", "", ""
 
     edge_datas = await asyncio.gather(
-        *[knowledge_graph_inst.get_node(r["hyperedge_name"]) for r in results]
+        *[knowledge_graph_inst.get_node(r) for r in results]
     )
 
     if not all([n is not None for n in edge_datas]):
@@ -950,7 +949,7 @@ async def _get_edge_data(
     #     *[knowledge_graph_inst.node_degree(r["hyperedge_name"]) for r in results]
     # )
     edge_datas = [
-        {"hyperedge": k["hyperedge_name"], "rank": k["distance"], **v}
+        {"hyperedge": k, "rank": v["weight"], **v}
         for k, v in zip(results, edge_datas)
         if v is not None
     ]

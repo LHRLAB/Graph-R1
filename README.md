@@ -29,7 +29,7 @@ python script_quickquery_batch.py --data_source 2wikimultihopqa
 ```
 Set up search server
 ```bash
-nohup python -u search_api.py --data_source 2wikimultihopqa > result_search_api_2wikimultihopqa.log 2>&1 &
+nohup python -u search_api.py --data_source 2wikimultihopqa > result_graphr1_search_api_2wikimultihopqa.log 2>&1 &
 ```
 
 #### 3. Run GRPO/REINFORCE++/PPO training with Qwen2.5-1.5B-Instruct
