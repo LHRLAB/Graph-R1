@@ -15,7 +15,7 @@ pip install -r requirements.txt
 ### Quick Start: Graph-R1 on 2WikiMultihopQA
 #### 1. Preprocess 2WikiMultihopQA dataset to parquet format
 ```bash
-python to_parquet.py --data_source 2wikimultihopqa
+python script_process.py --data_source 2wikimultihopqa
 ```
 
 #### 2. Set up retrieve server at 8001 port
