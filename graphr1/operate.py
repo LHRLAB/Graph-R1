@@ -486,108 +486,14 @@ async def kg_query(
     knowledge_graph_inst: BaseGraphStorage,
     entities_vdb: list,
     hyperedges_vdb: list,
-    text_chunks_db: list,
+    text_chunks_db: BaseKVStorage[TextChunkSchema],
     query_param: QueryParam,
     global_config: dict,
     hashing_kv: BaseKVStorage = None,
 ) -> str:
-    # Handle cache
-    use_model_func = global_config["llm_model_func"]
-    args_hash = compute_args_hash(query_param.mode, query)
-    cached_response, quantized, min_val, max_val = await handle_cache(
-        hashing_kv, args_hash, query, query_param.mode
-    )
-    if cached_response is not None:
-        return cached_response
     
     hl_keywords = query
     ll_keywords = query
-    
-    ############## original extract code ################
-    # language = global_config["addon_params"].get(
-    #     "language", PROMPTS["DEFAULT_LANGUAGE"]
-    # )
-    # entity_types = global_config["addon_params"].get(
-    #     "entity_types", PROMPTS["DEFAULT_ENTITY_TYPES"]
-    # )
-    # example_number = global_config["addon_params"].get("example_number", None)
-    # if example_number and example_number < len(PROMPTS["entity_extraction_examples"]):
-    #     examples = "\n".join(
-    #         PROMPTS["entity_extraction_examples"][: int(example_number)]
-    #     )
-    # else:
-    #     examples = "\n".join(PROMPTS["entity_extraction_examples"])
-
-    # example_context_base = dict(
-    #     tuple_delimiter=PROMPTS["DEFAULT_TUPLE_DELIMITER"],
-    #     record_delimiter=PROMPTS["DEFAULT_RECORD_DELIMITER"],
-    #     completion_delimiter=PROMPTS["DEFAULT_COMPLETION_DELIMITER"],
-    #     entity_types=",".join(entity_types),
-    #     language=language,
-    # )
-    # # add example's format
-    # examples = examples.format(**example_context_base)
-
-    # entity_extract_prompt = PROMPTS["entity_extraction"]
-    # context_base = dict(
-    #     tuple_delimiter=PROMPTS["DEFAULT_TUPLE_DELIMITER"],
-    #     record_delimiter=PROMPTS["DEFAULT_RECORD_DELIMITER"],
-    #     completion_delimiter=PROMPTS["DEFAULT_COMPLETION_DELIMITER"],
-    #     # entity_types=",".join(entity_types),
-    #     examples=examples,
-    #     language=language,
-    # )
-    
-    # hint_prompt = entity_extract_prompt.format(
-    #     **context_base, input_text="{input_text}"
-    # ).format(**context_base, input_text=query)
-
-    # final_result = await use_model_func(hint_prompt)
-
-    # logger.info("kw_prompt result:")
-    # print(final_result)
-    # hl_keywords, ll_keywords = [], []
-    # try:
-    #     records = split_string_by_multi_markers(
-    #         final_result,
-    #         [context_base["record_delimiter"], context_base["completion_delimiter"]],
-    #     )
-    #     for record in records:
-    #         record = re.search(r"\((.*)\)", record)
-    #         if record is None:
-    #             continue
-    #         record = record.group(1)
-    #         record_attributes = split_string_by_multi_markers(
-    #             record, [context_base["tuple_delimiter"]]
-    #         )
-    #         if len(record_attributes) == 3 and record_attributes[0] == '"hyper-relation"':
-    #             hl_keywords.append("<hyperedge>"+clean_str(record_attributes[1]))
-    #         elif len(record_attributes) == 5 and record_attributes[0] == '"entity"':
-    #             ll_keywords.append(clean_str(record_attributes[1]).upper())
-    #         else:
-    #             continue
-    # # Handle parsing error
-    # except json.JSONDecodeError as e:
-    #     print(f"JSON parsing error: {e} {final_result}")
-    #     return PROMPTS["fail_response"]
-
-    # # Handdle keywords missing
-    # if hl_keywords == [] and ll_keywords == []:
-    #     logger.warning("low_level_keywords and high_level_keywords is empty")
-    #     return PROMPTS["fail_response"]
-    # if ll_keywords == [] and query_param.mode in ["hybrid"]:
-    #     logger.warning("low_level_keywords is empty")
-    #     return PROMPTS["fail_response"]
-    # else:
-    #     ll_keywords = ", ".join(ll_keywords)
-    # if hl_keywords == [] and query_param.mode in ["hybrid"]:
-    #     logger.warning("high_level_keywords is empty")
-    #     return PROMPTS["fail_response"]
-    # else:
-    #     hl_keywords = ", ".join(hl_keywords)
-    ########################################
-
-    # Build context
     keywords = [ll_keywords, hl_keywords]
     context = await _build_query_context(
         keywords,
@@ -597,47 +503,9 @@ async def kg_query(
         text_chunks_db,
         query_param,
     )
+    
+    return context
 
-    if query_param.only_need_context:
-        return context
-    if context is None:
-        return PROMPTS["fail_response"]
-    sys_prompt_temp = PROMPTS["rag_response"]
-    sys_prompt = sys_prompt_temp.format(
-        context_data=context, response_type=query_param.response_type
-    )
-    if query_param.only_need_prompt:
-        return sys_prompt
-    response = await use_model_func(
-        query,
-        system_prompt=sys_prompt,
-        stream=query_param.stream,
-    )
-    if isinstance(response, str) and len(response) > len(sys_prompt):
-        response = (
-            response.replace(sys_prompt, "")
-            .replace("user", "")
-            .replace("model", "")
-            .replace(query, "")
-            .replace("<system>", "")
-            .replace("</system>", "")
-            .strip()
-        )
-
-    # Save to cache
-    await save_to_cache(
-        hashing_kv,
-        CacheData(
-            args_hash=args_hash,
-            content=response,
-            prompt=query,
-            quantized=quantized,
-            min_val=min_val,
-            max_val=max_val,
-            mode=query_param.mode,
-        ),
-    )
-    return response
 
 
 async def _build_query_context(
@@ -650,97 +518,39 @@ async def _build_query_context(
 ):
 
     ll_kewwords, hl_keywrds = query[0], query[1]
-    if query_param.mode in ["local", "hybrid"]:
-        if ll_kewwords == "":
-            ll_entities_context, ll_relations_context, ll_text_units_context = (
-                "",
-                "",
-                "",
-            )
-            warnings.warn(
-                "Low Level context is None. Return empty Low entity/relationship/source"
-            )
-            query_param.mode = "global"
-        else:
-            (
-                ll_entities_context,
-                ll_relations_context,
-                ll_text_units_context,
-            ) = await _get_node_data(
-                ll_kewwords,
-                knowledge_graph_inst,
-                entities_vdb,
-                text_chunks_db,
-                query_param,
-            )
-    if query_param.mode in ["global", "hybrid"]:
-        if hl_keywrds == "":
-            hl_entities_context, hl_relations_context, hl_text_units_context = (
-                "",
-                "",
-                "",
-            )
-            warnings.warn(
-                "High Level context is None. Return empty High entity/relationship/source"
-            )
-            query_param.mode = "local"
-        else:
-            (
-                hl_entities_context,
-                hl_relations_context,
-                hl_text_units_context,
-            ) = await _get_edge_data(
-                hl_keywrds,
-                knowledge_graph_inst,
-                hyperedges_vdb,
-                text_chunks_db,
-                query_param,
-            )
-            if (
-                hl_entities_context == ""
-                and hl_relations_context == ""
-                and hl_text_units_context == ""
-            ):
-                logger.warn("No high level context found. Switching to local mode.")
-                query_param.mode = "local"
-    if query_param.mode == "hybrid":
-        entities_context, relations_context, text_units_context = combine_contexts(
-            [hl_entities_context, ll_entities_context],
-            [hl_relations_context, ll_relations_context],
-            [hl_text_units_context, ll_text_units_context],
-        )
-    elif query_param.mode == "local":
-        entities_context, relations_context, text_units_context = (
-            ll_entities_context,
-            ll_relations_context,
-            ll_text_units_context,
-        )
-    elif query_param.mode == "global":
-        entities_context, relations_context, text_units_context = (
-            hl_entities_context,
-            hl_relations_context,
-            hl_text_units_context,
-        )
-    return f"""
------Relationships-----
-```csv
-{relations_context}
-```
-"""
-#     return f"""
-# -----Entities-----
-# ```csv
-# {entities_context}
-# ```
-# -----Relationships-----
-# ```csv
-# {relations_context}
-# ```
-# -----Sources-----
-# ```csv
-# {text_units_context}
-# ```
-# """
+
+    knowledge_list_1 = await _get_node_data(
+        ll_kewwords,
+        knowledge_graph_inst,
+        entities_vdb,
+        text_chunks_db,
+        query_param,
+    )
+
+    knowledge_list_2 = await _get_edge_data(
+        hl_keywrds,
+        knowledge_graph_inst,
+        hyperedges_vdb,
+        text_chunks_db,
+        query_param,
+    )
+    
+    know_score = dict()
+    for i, k in enumerate(knowledge_list_1):
+        if k not in know_score:
+            know_score[k] = 0
+        score = 1/(i+1)
+        know_score[k] += score
+    for i, k in enumerate(knowledge_list_2):
+        if k not in know_score:
+            know_score[k] = 0
+        score = 1/(i+1)
+        know_score[k] += score
+    knowledge_list = sorted(know_score.items(), key=lambda x: x[1], reverse=True)[:query_param.top_k]
+    knowledge=[]
+    for k in knowledge_list:
+        knowledge.append({"<knowledge>": k[0], "<coherence>": round(k[1],3)})
+    return knowledge
 
 
 async def _get_node_data(
@@ -768,39 +578,16 @@ async def _get_node_data(
         {**n, "entity_name": k, "rank": d}
         for k, n, d in zip(results, node_datas, node_degrees)
         if n is not None
-    ]  # what is this text_chunks_db doing.  dont remember it in airvx.  check the diagram.
-    # get entitytext chunk
-    # get relate edges
+    ]  
     use_relations = await _find_most_related_edges_from_entities(
         node_datas, query_param, knowledge_graph_inst
     )
-    # build prompt
-    entites_section_list = [["id", "entity", "type", "description"]]
-    for i, n in enumerate(node_datas):
-        entites_section_list.append(
-            [
-                i,
-                n["entity_name"],
-                n.get("entity_type", "UNKNOWN"),
-                n.get("description", "UNKNOWN"),
-            ]
-        )
-    entities_context = list_of_list_to_csv(entites_section_list)
-
-    relations_section_list = [
-        ["id", "hyperedge", "related_entities"]
-    ]
-    for i, e in enumerate(use_relations):
-        relations_section_list.append(
-            [
-                i,
-                e["description"],
-                e["related_nodes"]
-            ]
-        )
-    relations_context = list_of_list_to_csv(relations_section_list)
-
-    return entities_context, relations_context, ""
+    knowledge_list = [s["description"].replace("<hyperedge>","") for s in use_relations]
+    # s_ids = []
+    # for r in use_relations:
+    #     s_ids.extend(r["source_id"].split(GRAPH_FIELD_SEP))
+    # knowledge_list = [(await text_chunks_db.get_by_id(s))["content"] for s in s_ids]
+    return knowledge_list
 
 
 async def _find_most_related_text_unit_from_entities(
@@ -909,21 +696,6 @@ async def _find_most_related_edges_from_entities(
     all_edges_data = sorted(
         all_edges_data, key=lambda x: (x["rank"], x["weight"]), reverse=True
     )
-    all_edges_data = truncate_list_by_token_size(
-        all_edges_data,
-        key=lambda x: x["description"],
-        max_token_size=query_param.max_token_for_global_context,
-    )
-    all_related_nodes = await asyncio.gather(
-        *[knowledge_graph_inst.get_node_edges(edge["src_tgt"][1]) for edge in all_edges_data]
-    )
-    all_nodes = []
-    for this_nodes in all_related_nodes:
-        all_nodes.append("|".join([n[1] for n in this_nodes]))
-    all_edges_data = [
-        {**e, "related_nodes": n}
-        for e, n in zip(all_edges_data, all_nodes)
-    ]
     return all_edges_data
 
 
@@ -956,51 +728,12 @@ async def _get_edge_data(
     edge_datas = sorted(
         edge_datas, key=lambda x: (x["rank"], x["weight"]), reverse=True
     )
-    edge_datas = truncate_list_by_token_size(
-        edge_datas,
-        key=lambda x: x["hyperedge"],
-        max_token_size=query_param.max_token_for_global_context,
-    )
-    all_related_nodes = await asyncio.gather(
-        *[knowledge_graph_inst.get_node_edges(edge["hyperedge"]) for edge in edge_datas]
-    )
-    all_nodes = []
-    for this_nodes in all_related_nodes:
-        all_nodes.append("|".join([n[1] for n in this_nodes]))
-    edge_datas = [
-        {**e, "related_nodes": n}
-        for e, n in zip(edge_datas, all_nodes)
-    ]
-
-    use_entities = await _find_most_related_entities_from_relationships(
-        edge_datas, query_param, knowledge_graph_inst
-    )
-
-    relations_section_list = [
-        ["id", "hyperedge", "related_entities"]
-    ]
-    for i, e in enumerate(edge_datas):
-        relations_section_list.append(
-            [
-                i,
-                e["hyperedge"],
-                e['related_nodes']
-            ]
-        )
-    relations_context = list_of_list_to_csv(relations_section_list)
-
-    entites_section_list = [["id", "entity", "type", "description"]]
-    for i, n in enumerate(use_entities):
-        entites_section_list.append(
-            [
-                i,
-                n["entity_name"],
-                n.get("entity_type", "UNKNOWN"),
-                n.get("description", "UNKNOWN")
-            ]
-        )
-    entities_context = list_of_list_to_csv(entites_section_list)
-    return entities_context, relations_context, ""
+    knowledge_list = [s["hyperedge"].replace("<hyperedge>","") for s in edge_datas]
+    # s_ids = []
+    # for r in edge_datas:
+    #     s_ids.extend(r["source_id"].split(GRAPH_FIELD_SEP))
+    # knowledge_list = [(await text_chunks_db.get_by_id(s))["content"] for s in s_ids]
+    return knowledge_list
 
 
 async def _find_most_related_entities_from_relationships(

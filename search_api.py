@@ -22,19 +22,11 @@ args = parser.parse_args()
 data_source = args.data_source
 
 # 加载 FAISS 索引和 FlagEmbedding 模型
-print(f"[DEBUG] LOADING EMBEDDINGS")
-index = faiss.read_index(f"expr/{data_source}/index.bin")
 model = FlagAutoModel.from_finetuned(
     'BAAI/bge-large-en-v1.5',
     query_instruction_for_retrieval="Represent this sentence for searching relevant passages: ",
     devices="cpu",
 )
-corpus = []
-with open(f"datasets/{data_source}/corpus.jsonl", "r") as f:
-    for line in f:
-        data = json.loads(line)
-        corpus.append(data["contents"])
-print("[DEBUG] EMBEDDINGS LOADED")
 
 # 加载 FAISS 索引和 FlagEmbedding 模型
 print(f"[DEBUG] LOADING EMBEDDINGS")
@@ -60,9 +52,9 @@ rag = GraphR1(
     working_dir=f"expr/{data_source}",  
 )
 
-async def process_query(query_text, rag_instance, entity_match, hyperedge_match, chunk_match):
-    result = await rag_instance.aquery(query_text, param=QueryParam(only_need_context=True, top_k=5), entity_match=entity_match, hyperedge_match=hyperedge_match, chunk_match=chunk_match)
-    return {"query": query_text, "result": result}, None
+async def process_query(query_text, rag_instance, entity_match, hyperedge_match):
+    result = await rag_instance.aquery(query_text, param=QueryParam(only_need_context=True, top_k=10), entity_match=entity_match, hyperedge_match=hyperedge_match)
+    return {"query": query_text, "result": result}
 
 def always_get_an_event_loop() -> asyncio.AbstractEventLoop:
     try:
@@ -87,15 +79,12 @@ def queries_to_results(queries: List[str]) -> List[str]:
     entity_match = {queries[i]:_format_results(ids[i], corpus_entity) for i in range(len(ids))}
     _, ids = index_hyperedge.search(embeddings, 5)  # 每个查询返回 5 个结果
     hyperedge_match = {queries[i]:_format_results(ids[i], corpus_hyperedge) for i in range(len(ids))}
-    _, ids = index.search(embeddings, 5)  # 每个查询返回 5 个结果
-    chunk_match = {queries[i]:_format_results(ids[i], corpus) for i in range(len(ids))}
-    
     
     results = []
     loop = always_get_an_event_loop()
     for query_text in tqdm(queries, desc="Processing queries", unit="query"):
-        result, error = loop.run_until_complete(
-            process_query(query_text, rag, entity_match[query_text], hyperedge_match[query_text], chunk_match[query_text])
+        result = loop.run_until_complete(
+            process_query(query_text, rag, entity_match[query_text], hyperedge_match[query_text])
         )
         results.append(json.dumps({"results": result["result"]}))
     return results
