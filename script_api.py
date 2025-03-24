@@ -49,7 +49,7 @@ rag = GraphR1(
 )
 
 async def process_query(query_text, rag_instance, entity_match, hyperedge_match):
-    result = await rag_instance.aquery(query_text, param=QueryParam(only_need_context=True, top_k=100), entity_match=entity_match, hyperedge_match=hyperedge_match)
+    result = await rag_instance.aquery(query_text, param=QueryParam(only_need_context=True, top_k=10), entity_match=entity_match, hyperedge_match=hyperedge_match)
     return {"query": query_text, "result": result}
 
 def always_get_an_event_loop() -> asyncio.AbstractEventLoop:
@@ -73,7 +73,7 @@ def queries_to_results(queries: List[str]) -> List[str]:
     embeddings = model.encode_queries(queries)
     _, ids = index_entity.search(embeddings, 5)  # 每个查询返回 5 个结果
     entity_match = {queries[i]:_format_results(ids[i], corpus_entity) for i in range(len(ids))}
-    _, ids = index_hyperedge.search(embeddings, 10)  # 每个查询返回 5 个结果
+    _, ids = index_hyperedge.search(embeddings, 5)  # 每个查询返回 5 个结果
     hyperedge_match = {queries[i]:_format_results(ids[i], corpus_hyperedge) for i in range(len(ids))}
     
     results = []
