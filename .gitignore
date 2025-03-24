@@ -181,3 +181,5 @@ new_datasets/
 *.log
 graphrag/HyperGraphRAG/expr/*
 expr/*
+datasets2/*
+expr2/*

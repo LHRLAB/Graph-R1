@@ -221,19 +221,17 @@ class GraphR1:
             embedding_func=self.embedding_func,
         )
 
-        self.entities_vdb = self.vector_db_storage_cls(
+        self.entities_vdb = self.key_string_value_json_storage_cls(
             namespace="entities",
             global_config=asdict(self),
             embedding_func=self.embedding_func,
-            meta_fields={"entity_name"},
         )
-        self.hyperedges_vdb = self.vector_db_storage_cls(
+        self.hyperedges_vdb = self.key_string_value_json_storage_cls(
             namespace="hyperedges",
             global_config=asdict(self),
             embedding_func=self.embedding_func,
-            meta_fields={"hyperedge_name"},
         )
-        self.chunks_vdb = self.vector_db_storage_cls(
+        self.chunks_vdb = self.key_string_value_json_storage_cls(
             namespace="chunks",
             global_config=asdict(self),
             embedding_func=self.embedding_func,
@@ -316,8 +314,6 @@ class GraphR1:
                 logger.warning("All chunks are already in the storage")
                 return
             logger.info(f"[New Chunks] inserting {len(inserting_chunks)} chunks")
-
-            await self.chunks_vdb.upsert(inserting_chunks)
 
             logger.info("[Entity Extraction]...")
             maybe_new_kg = await extract_entities(

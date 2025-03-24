@@ -7,10 +7,6 @@ from FlagEmbedding import FlagAutoModel
 from typing import List
 import argparse
 from graphr1 import GraphR1, QueryParam
-from transformers import AutoTokenizer, AutoModel
-from graphr1.utils import EmbeddingFunc
-from graphr1.llm import hf_embedding, hf_model_complete
-
 import os
 import asyncio
 from tqdm import tqdm
@@ -32,20 +28,20 @@ model = FlagAutoModel.from_finetuned(
 print(f"[DEBUG] LOADING EMBEDDINGS")
 index_entity = faiss.read_index(f"expr/{data_source}/index_entity.bin")
 corpus_entity = []
-with open(f"expr/{data_source}/vdb_entities.json") as f:
+with open(f"expr/{data_source}/kv_store_entities.json") as f:
     entities = json.load(f)
-    for entity in entities['data']:
-        corpus_entity.append(entity['entity_name'])
+    for item in entities:
+        corpus_entity.append(entities[item]['entity_name'])
 print("[DEBUG] EMBEDDINGS LOADED")
 
 # 加载 FAISS 索引和 FlagEmbedding 模型
 print(f"[DEBUG] LOADING EMBEDDINGS")
 index_hyperedge = faiss.read_index(f"expr/{data_source}/index_hyperedge.bin")
 corpus_hyperedge = []
-with open(f"expr/{data_source}/vdb_hyperedges.json") as f:
-    relations = json.load(f)
-    for relation in relations['data']:
-        corpus_hyperedge.append(relation['hyperedge_name'])
+with open(f"expr/{data_source}/kv_store_text_chunks.json") as f:
+    hyperedges = json.load(f)
+    for item in hyperedges:
+        corpus_hyperedge.append(hyperedges[item]['content'])
 print("[DEBUG] EMBEDDINGS LOADED")
 
 rag = GraphR1(
