@@ -2,14 +2,14 @@
 
 ### Install Environment
 ```bash
-conda create -n graphr1 python==3.11
+conda create -n graphr1 python==3.11.11
 conda activate graphr1
 pip3 install torch==2.4.0 --index-url https://download.pytorch.org/whl/cu124
 pip3 install flash-attn --no-build-isolation
 pip3 install -e .
 # pip install debugpy==1.8.0
 # pip install "ray[default]" debugpy
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 ### Quick Start: Graph-R1 on 2WikiMultihopQA
