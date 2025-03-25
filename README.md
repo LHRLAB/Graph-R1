@@ -30,7 +30,7 @@ nohup python -u script_build.py --data_source 2WikiMultiHopQA > result_build_2Wi
 # nohup python -u script_build.py --data_source HotpotQA > result_build_HotpotQA.log 2>&1 &
 # nohup python -u script_build.py --data_source NQ > result_build_NQ.log 2>&1 &
 ```
-> You can also skip this step and download the pre-built Knowledge HyperGraph from [here](), and set the path in `expr/`.
+> You can also skip this step, download the pre-built Knowledge HyperGraph from [here](), and set the path in `expr/`.
 
 #### 3. Set up retrieve server at 8001 port
 Set up Graph-R1 retrieve server
