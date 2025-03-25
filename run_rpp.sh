@@ -1,7 +1,18 @@
+while getopts "p:m:d:" opt; do
+  case $opt in
+    p) path=$OPTARG ;;
+    m) model=$OPTARG ;;
+    d) dataset=$OPTARG ;;
+    *) echo "Invalid option"; exit 1 ;;
+  esac
+done
+
+shift $((OPTIND - 1))
+
 export VLLM_ATTENTION_BACKEND=XFORMERS
-export BASE_MODEL='/mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.5B-Instruct'
-export PROJECT_NAME='2wikimultihopqa_qwen2.5-1.5b-instruct'
-export EXPERIMENT_NAME=rpp
+export BASE_MODEL="${path}"
+export PROJECT_NAME='Graph-R1'
+export EXPERIMENT_NAME="${model}_${dataset}_rpp"
 export HYDRA_FULL_ERROR=1
 export CUDA_LAUNCH_BLOCKING=1
 set -x
@@ -10,8 +21,8 @@ ray stop
 ray start --head
 
 python3 -m verl.trainer.main_ppo \
-    data.train_files=datasets/2wikimultihopqa/processed/train.parquet \
-    data.val_files=datasets/2wikimultihopqa/processed/test.parquet \
+    data.train_files=datasets/"${dataset}"/processed/train.parquet \
+    data.val_files=datasets/"${dataset}"/processed/test.parquet \
     data.train_batch_size=128 \
     data.max_prompt_length=4096 \
     data.max_response_length=4096 \
