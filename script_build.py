@@ -92,7 +92,7 @@ def insert_knowledge(data_source, unique_contexts):
     rag = GraphR1(
         working_dir=f"expr/{data_source}"   
     )    
-    # extract_knowledge(rag, unique_contexts)
+    extract_knowledge(rag, unique_contexts)
     embed_knowledge(data_source)
     print(f"Knowledge successfully inserted and embedded for {data_source}")
 
