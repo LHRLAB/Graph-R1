@@ -7,9 +7,9 @@ conda activate graphr1
 pip3 install torch==2.4.0 --index-url https://download.pytorch.org/whl/cu124
 pip3 install flash-attn --no-build-isolation
 pip3 install -e .
+pip3 install -r requirements.txt
 # pip install debugpy==1.8.0
 # pip install "ray[default]" debugpy
-pip3 install -r requirements.txt
 ```
 
 ### Quick Start: Graph-R1 on 2WikiMultiHopQA
