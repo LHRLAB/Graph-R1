@@ -23,7 +23,7 @@ python script_process.py --data_source 2WikiMultiHopQA
 # python script_process.py --data_source NQ
 ```
 
-#### 2. Extract contexts and build Knowledge HyperGraph
+#### 2. Extract contexts and build Knowledge HyperGraph (Optional)
 For the extracted contexts, we insert them into the Knowledge HyperGraph.
 ```bash
 nohup python -u script_build.py --data_source 2WikiMultiHopQA > result_build_2WikiMultiHopQA.log 2>&1 &
