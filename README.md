@@ -13,33 +13,7 @@ pip3 install -r requirements.txt
 ```
 
 ### Dataset Preparation
-We conduct experiments on seven datasets: 2WikiMultiHopQA, HotpotQA, Musique, NarrativeQA, NQ, PopQA, and TriviaQA. You can download them from [here](), and set the data path in `datasets/`.
-
-```
-Graph-R1/
-└── datasets/
-    ├── 2WikiMultiHopQA/   
-        ├── raw/
-        └── corpus.jsonl 
-    ├── HotpotQA/
-        ├── raw/
-        └── corpus.jsonl
-    ├── Musique/
-        ├── raw/
-        └── corpus.jsonl
-    ├── NarrativeQA/
-        ├── raw/
-        └── corpus.jsonl
-    ├── NQ/
-        ├── raw/
-        └── corpus.jsonl
-    ├── PopQA/
-        ├── raw/
-        └── corpus.jsonl
-    └── TriviaQA/
-        ├── raw/
-        └── corpus.jsonl                                                          
-```
+> We conduct experiments on seven datasets: 2WikiMultiHopQA, HotpotQA, Musique, NarrativeQA, NQ, PopQA, and TriviaQA. You can download them from [here](), and set the data path in `datasets/`.
 
 ### Quick Start: Graph-R1 on 2WikiMultiHopQA
 #### 1. Preprocess 2WikiMultiHopQA dataset to parquet format
@@ -56,7 +30,7 @@ nohup python -u script_build.py --data_source 2WikiMultiHopQA > result_build_2Wi
 # nohup python -u script_build.py --data_source HotpotQA > result_build_HotpotQA.log 2>&1 &
 # nohup python -u script_build.py --data_source NQ > result_build_NQ.log 2>&1 &
 ```
-You can download the pre-built Knowledge HyperGraph from [here](), and set the path in `expr/`.
+> You can download the pre-built Knowledge HyperGraph from [here](), and set the path in `expr/`.
 
 #### 3. Set up retrieve server at 8001 port
 Set up Graph-R1 retrieve server
