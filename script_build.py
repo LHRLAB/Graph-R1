@@ -98,7 +98,7 @@ def insert_knowledge(data_source, unique_contexts):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data_source", type=str, default="2wikimultihopqa")
+    parser.add_argument("--data_source", type=str, default="2WikiMultiHopQA")
     args = parser.parse_args()
     data_source = args.data_source
     

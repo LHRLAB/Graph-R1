@@ -13,7 +13,7 @@ from tqdm import tqdm
 os.environ["OPENAI_API_KEY"] = open("openai_api_key.txt").read().strip()
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_source', default='2wikimultihopqa')
+parser.add_argument('--data_source', default='2WikiMultiHopQA')
 args = parser.parse_args()
 data_source = args.data_source
 

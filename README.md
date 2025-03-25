@@ -12,32 +12,36 @@ pip3 install -e .
 pip3 install -r requirements.txt
 ```
 
-### Quick Start: Graph-R1 on 2WikiMultihopQA
-#### 1. Preprocess 2WikiMultihopQA dataset to parquet format
+### Quick Start: Graph-R1 on 2WikiMultiHopQA
+#### 1. Preprocess 2WikiMultiHopQA dataset to parquet format
 ```bash
-python script_process.py --data_source 2wikimultihopqa
+python script_process.py --data_source 2WikiMultiHopQA
+# python script_process.py --data_source HotpotQA
+# python script_process.py --data_source NQ
 ```
 
 #### 2. Set up retrieve server at 8001 port
 For the extracted contexts, we insert them into the Graph-R1 system.
 ```bash
-nohup python -u script_build.py --data_source 2wikimultihopqa > result_2wikimultihopqa_build.log 2>&1 &
+nohup python -u script_build.py --data_source 2WikiMultiHopQA > result_2WikiMultiHopQA_build.log 2>&1 &
+# nohup python -u script_build.py --data_source HotpotQA > result_HotpotQA_build.log 2>&1 &
+# nohup python -u script_build.py --data_source NQ > result_NQ_build.log 2>&1 &
 ```
 Set up Graph-R1 retrieve server
 ```bash
-nohup python -u script_api.py --data_source 2wikimultihopqa > result_2wikimultihopqa_api.log 2>&1 &
+nohup python -u script_api.py --data_source 2WikiMultiHopQA > result_2WikiMultiHopQA_api.log 2>&1 &
+# nohup python -u script_api.py --data_source NQ > result_NQ_api.log 2>&1 &
 ```
 
 #### 3. Run GRPO/REINFORCE++/PPO training with Qwen2.5-1.5B-Instruct
 ```bash
-bash run_grpo_2wikimultihopqa.sh
-nohup bash -u run_grpo_2wikimultihopqa.sh > result_2wikimultihopqa_run_grpo.log 2>&1 &
+# bash run_grpo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.5B-Instruct -m Qwen2.5-1.5B-Instruct -d 2WikiMultiHopQA
+nohup bash -u run_grpo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.5B-Instruct -m Qwen2.5-1.5B-Instruct -d 2WikiMultiHopQA > result_Qwen2.5-1.5B-Instruct_2WikiMultiHopQA_grpo.log 2>&1 &
+# nohup bash -u run_grpo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.5B-Instruct -m Qwen2.5-1.5B-Instruct -d NQ > result_Qwen2.5-1.5B-Instruct_NQ_grpo.log 2>&1 &
 
-bash run_rpp_2wikimultihopqa.sh
-nohup bash -u run_rpp_2wikimultihopqa.sh > result_2wikimultihopqa_run_rpp.log 2>&1 &
+nohup bash -u run_rpp.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.5B-Instruct -m Qwen2.5-1.5B-Instruct -d 2WikiMultiHopQA > result_Qwen2.5-1.5B-Instruct_2WikiMultiHopQA_rpp.log 2>&1 &
 
-bash run_ppo_2wikimultihopqa.sh
-nohup bash -u run_ppo_2wikimultihopqa.sh > result_2wikimultihopqa_run_ppo.log 2>&1 &
+nohup bash -u run_ppo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.5B-Instruct -m Qwen2.5-1.5B-Instruct -d 2WikiMultiHopQA > result_Qwen2.5-1.5B-Instruct_2WikiMultiHopQA_ppo.log 2>&1 &
 ```
 
 #### 4. Close search server 8001 port

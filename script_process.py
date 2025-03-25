@@ -22,7 +22,7 @@ If you find no further external knowledge needed, you can directly provide the a
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data_source', default='2wikimultihopqa')
+    parser.add_argument('--data_source', default='2WikiMultiHopQA')
 
     args = parser.parse_args()
 
