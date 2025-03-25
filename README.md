@@ -25,6 +25,7 @@ python script_process.py --data_source 2WikiMultiHopQA
 
 #### 2. Extract contexts and build Knowledge HyperGraph (Optional)
 For the extracted contexts, we insert them into the Knowledge HyperGraph.
+> We use GPT-4o-mini as extractor, so you should set your openai API key in `openai_api_key_txt`.
 ```bash
 nohup python -u script_build.py --data_source 2WikiMultiHopQA > result_build_2WikiMultiHopQA.log 2>&1 &
 # nohup python -u script_build.py --data_source HotpotQA > result_build_HotpotQA.log 2>&1 &
