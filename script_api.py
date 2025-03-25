@@ -38,7 +38,7 @@ print("[DEBUG] EMBEDDINGS LOADED")
 print(f"[DEBUG] LOADING EMBEDDINGS")
 index_hyperedge = faiss.read_index(f"expr/{data_source}/index_hyperedge.bin")
 corpus_hyperedge = []
-with open(f"expr/{data_source}/kv_store_text_chunks.json") as f:
+with open(f"expr/{data_source}/kv_store_hyperedges.json") as f:
     hyperedges = json.load(f)
     for item in hyperedges:
         corpus_hyperedge.append(hyperedges[item]['content'])

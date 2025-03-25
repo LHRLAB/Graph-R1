@@ -38,7 +38,7 @@ def embed_knowledge(data_source):
             corpus_entity_des.append(entities[item]['content'])
             
     corpus_hyperedge = []
-    with open(f"expr/{data_source}/kv_store_text_chunks.json") as f:
+    with open(f"expr/{data_source}/kv_store_hyperedges.json") as f:
         hyperedges = json.load(f)
         for item in hyperedges:
             corpus_hyperedge.append(hyperedges[item]['content'])
@@ -92,7 +92,7 @@ def insert_knowledge(data_source, unique_contexts):
     rag = GraphR1(
         working_dir=f"expr/{data_source}"   
     )    
-    extract_knowledge(rag, unique_contexts)
+    # extract_knowledge(rag, unique_contexts)
     embed_knowledge(data_source)
     print(f"Knowledge successfully inserted and embedded for {data_source}")
 
