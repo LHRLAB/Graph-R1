@@ -45,6 +45,7 @@ nohup bash -u run_grpo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1
 # nohup bash -u run_grpo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.5B-Instruct -m Qwen2.5-1.5B-Instruct -d NQ > result_run_Qwen2.5-1.5B-Instruct_NQ_grpo.log 2>&1 &
 
 nohup bash -u run_rpp.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.5B-Instruct -m Qwen2.5-1.5B-Instruct -d 2WikiMultiHopQA > result_run_Qwen2.5-1.5B-Instruct_2WikiMultiHopQA_rpp.log 2>&1 &
+# nohup bash -u run_rpp.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.5B-Instruct -m Qwen2.5-1.5B-Instruct -d NQ > result_run_Qwen2.5-1.5B-Instruct_NQ_rpp.log 2>&1 &
 
 nohup bash -u run_ppo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.5B-Instruct -m Qwen2.5-1.5B-Instruct -d 2WikiMultiHopQA > result_run_Qwen2.5-1.5B-Instruct_2WikiMultiHopQA_ppo.log 2>&1 &
 ```
