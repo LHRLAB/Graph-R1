@@ -9,6 +9,23 @@ import faiss
 os.environ["OPENAI_API_KEY"] = open("openai_api_key.txt").read().strip()
 
 def extract_knowledge(rag, unique_contexts):
+    print(f"Total insert rounds: {len(unique_contexts)//50 + 1}")
+    for i in range(0, len(unique_contexts), 50):
+        print(f"This is the {i//50 + 1} round of insertion, remain rounds: {len(unique_contexts)//50 - i//50}")
+        retries = 0
+        max_retries = 50
+        while retries < max_retries:
+            try:
+                rag.insert(unique_contexts[i:i+50])
+                break
+            except Exception as e:
+                retries += 1
+                print(f"Insertion failed, retrying ({retries}/{max_retries}), error: {e}")
+                time.sleep(10)
+        if retries == max_retries:
+            print("Insertion failed after exceeding the maximum number of retries")
+    
+    
     retries = 0
     max_retries = 50
     while retries < max_retries:
