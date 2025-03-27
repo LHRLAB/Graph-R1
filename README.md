@@ -22,6 +22,7 @@ python script_process.py --data_source 2WikiMultiHopQA
 # python script_process.py --data_source HotpotQA
 # python script_process.py --data_source NQ
 # python script_process.py --data_source Musique
+# python script_process.py --data_source NarrativeQA
 ```
 
 #### 2. Extract contexts and build Knowledge HyperGraph (Optional)
@@ -31,6 +32,7 @@ nohup python -u script_build.py --data_source 2WikiMultiHopQA > result_build_2Wi
 # nohup python -u script_build.py --data_source HotpotQA > result_build_HotpotQA.log 2>&1 &
 # nohup python -u script_build.py --data_source NQ > result_build_NQ.log 2>&1 &
 # nohup python -u script_build.py --data_source Musique > result_build_Musique.log 2>&1 &
+# nohup python -u script_build.py --data_source NarrativeQA > result_build_NarrativeQA.log 2>&1 &
 ```
 > You can also skip this step, download the pre-built Knowledge HyperGraph from [here](), and set in `expr/`.
 
