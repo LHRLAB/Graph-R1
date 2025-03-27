@@ -24,6 +24,7 @@ python script_process.py --data_source 2WikiMultiHopQA
 # python script_process.py --data_source NarrativeQA
 # python script_process.py --data_source NQ
 # python script_process.py --data_source PopQA
+# python script_process.py --data_source TriviaQA
 ```
 
 #### 2. Extract contexts and build Knowledge HyperGraph (Optional)
@@ -35,6 +36,7 @@ nohup python -u script_build.py --data_source 2WikiMultiHopQA > result_build_2Wi
 # nohup python -u script_build.py --data_source NarrativeQA > result_build_NarrativeQA.log 2>&1 &
 # nohup python -u script_build.py --data_source NQ > result_build_NQ.log 2>&1 &
 # nohup python -u script_build.py --data_source PopQA > result_build_PopQA.log 2>&1 &
+# nohup python -u script_build.py --data_source TriviaQA > result_build_TriviaQA.log 2>&1 &
 ```
 > You can also skip this step, download the pre-built Knowledge HyperGraph from [here](), and set in `expr/`.
 
@@ -62,6 +64,8 @@ nohup bash -u run_ppo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.
 nohup bash -u run_grpo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-3B-Instruct -m Qwen2.5-3B-Instruct -d 2WikiMultiHopQA > result_run_Qwen2.5-3B-Instruct_2WikiMultiHopQA_grpo.log 2>&1 &
 
 nohup bash -u run_rpp.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-3B-Instruct -m Qwen2.5-3B-Instruct -d 2WikiMultiHopQA > result_run_Qwen2.5-3B-Instruct_2WikiMultiHopQA_rpp.log 2>&1 &
+
+nohup bash -u run_ppo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-3B-Instruct -m Qwen2.5-3B-Instruct -d 2WikiMultiHopQA > result_run_Qwen2.5-3B-Instruct_2WikiMultiHopQA_ppo.log 2>&1 &
 ```
 
 #### 5. Close search server 8001 port
