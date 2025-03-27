@@ -60,6 +60,8 @@ nohup bash -u run_ppo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.
 #### 4(b). Run GRPO/REINFORCE++/PPO training with Qwen2.5-3B-Instruct (Need 4 x 48GB GPUs)
 ```bash
 nohup bash -u run_grpo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-3B-Instruct -m Qwen2.5-3B-Instruct -d 2WikiMultiHopQA > result_run_Qwen2.5-3B-Instruct_2WikiMultiHopQA_grpo.log 2>&1 &
+
+nohup bash -u run_rpp.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-3B-Instruct -m Qwen2.5-3B-Instruct -d 2WikiMultiHopQA > result_run_Qwen2.5-3B-Instruct_2WikiMultiHopQA_rpp.log 2>&1 &
 ```
 
 #### 5. Close search server 8001 port
