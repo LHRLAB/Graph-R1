@@ -6,13 +6,20 @@ Recently, the **GraphRAG** method effectively addresses the data silos issue, si
 
 To bridge this gap, we propose **Graph-R1**, an **end-to-end reinforcement learning (RL)** framework designed to improve **reasoning-on-graph reasoning capabilities** of large language models (LLMs). 
 
-Specifically, we construct a **knowledge hypergraph** using **n-ary relation extraction** from HyperGraphRAG. We then employ an explicit reward mechanism within RL, enabling the LLM to iteratively execute a "**think–generate query–retrieve subgraph–rethink**" reasoning cycle. This iterative approach enables the model to effectively leverage graph knowledge to produce high-quality answers. 
+Specifically, we constructs a **knowledge hypergraph** using **n-ary relation extraction** from HyperGraphRAG. We then employ an explicit reward mechanism within RL, enabling the LLM to iteratively execute a "**think–generate query–retrieve subgraph–rethink**" reasoning cycle. This iterative approach enables the model to effectively leverage graph knowledge to produce high-quality answers. 
 
-By integrating structured knowledge into LLM reasoning via reinforcement learning, Graph-R1 holds promise for aplications in **knowledge-intensive fields** such as healthcare, finance, and law.
+By integrating structured knowledge into LLM reasoning more flexibly via reinforcement learning, Graph-R1 holds promise for aplications in **knowledge-intensive fields** such as healthcare, finance, and law.
 
 ### Result
 
-
+<table>
+  <tr>
+    <td><img src="./figs/1_f1.png" width="100%"/></td>
+    <td><img src="./figs/1_em.png" width="100%"/></td>
+    <td><img src="./figs/1_res.png" width="100%"/></td>
+    <td><img src="./figs/1_turn.png" width="100%"/></td>
+  </tr>
+</table>
 
 ### Install Environment
 ```bash
