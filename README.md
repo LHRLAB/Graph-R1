@@ -10,7 +10,7 @@ Specifically, we constructs a **knowledge hypergraph** using **n-ary relation ex
 
 By integrating structured knowledge into LLM reasoning more flexibly via reinforcement learning, Graph-R1 holds promise for aplications in **knowledge-intensive fields** such as healthcare, finance, and law.
 
-### Result
+### Experimental Results
 **Results on Different RL Algorithms:**
 <table>
   <tr>
