@@ -1,5 +1,9 @@
 # Graph-R1: Incentivizing Reasoning-on-Graph Capability in LLM via Reinforcement Learning
 
+### Overview
+
+Recently, the **GraphRAG method effectively addresses the data silos issue**, significantly enhancing the efficiency of knowledge retrieval. Nevertheless, in practical scenarios, **the disconnect between graph-structured knowledge and language modalities continues to constrain the model's performance**. To bridge this gap, we propose **Graph-R1, an end-to-end reinforcement learning (RL) framework** designed to substantially improve the **graph-based reasoning capabilities of large language models (LLMs)**. Specifically, we first **construct a knowledge hypergraph using the n-ary relation extraction techniques from HyperGraphRAG**. Subsequently, we employ an **explicit reward mechanism within an end-to-end RL setup**, encouraging the LLM to iteratively execute a **"think–generate query–retrieve subgraph–rethink" reasoning cycle**. This iterative approach ultimately enables the model to produce **precise, high-quality answers by effectively leveraging graph knowledge**.
+
 ### Install Environment
 ```bash
 conda create -n graphr1 python==3.11.11
