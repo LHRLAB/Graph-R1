@@ -11,13 +11,33 @@ Specifically, we constructs a **knowledge hypergraph** using **n-ary relation ex
 By integrating structured knowledge into LLM reasoning more flexibly via reinforcement learning, Graph-R1 holds promise for aplications in **knowledge-intensive fields** such as healthcare, finance, and law.
 
 ### Result
-
+**Results on Different RL Algorithms:**
 <table>
   <tr>
     <td><img src="./figs/1_f1.png" width="100%"/></td>
     <td><img src="./figs/1_em.png" width="100%"/></td>
     <td><img src="./figs/1_res.png" width="100%"/></td>
     <td><img src="./figs/1_turn.png" width="100%"/></td>
+  </tr>
+</table>
+
+**Results on Different Datasets:**
+<table>
+  <tr>
+    <td><img src="./figs/2_f1.png" width="100%"/></td>
+    <td><img src="./figs/2_em.png" width="100%"/></td>
+    <td><img src="./figs/2_res.png" width="100%"/></td>
+    <td><img src="./figs/2_turn.png" width="100%"/></td>
+  </tr>
+</table>
+
+**Results on Different Parameter Scale of LLM:**
+<table>
+  <tr>
+    <td><img src="./figs/3_f1.png" width="100%"/></td>
+    <td><img src="./figs/3_em.png" width="100%"/></td>
+    <td><img src="./figs/3_res.png" width="100%"/></td>
+    <td><img src="./figs/3_turn.png" width="100%"/></td>
   </tr>
 </table>
 
