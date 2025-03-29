@@ -4,7 +4,7 @@
 
 Recently, the **GraphRAG** method effectively addresses the data silos issue, significantly enhancing knowledge retrieval efficiency. Nevertheless, the disconnect between graph-structured knowledge and language modalities continues to constrain performance. 
 
-To bridge this gap, we propose **Graph-R1**, an **end-to-end reinforcement learning (RL)** framework designed to improve **reasoning-on-graph reasoning capabilities** of large language models (LLMs). 
+To bridge this gap, we propose **Graph-R1**, an **end-to-end reinforcement learning (RL)** framework designed to improve **reasoning-on-graph capabilities** of large language models (LLMs). 
 
 Specifically, we constructs a **knowledge hypergraph** using **n-ary relation extraction** from [HyperGraphRAG](https://github.com/LHRLAB/HyperGraphRAG). We then employ an explicit reward mechanism within RL, enabling the LLM to iteratively execute a "**think–generate query–retrieve subgraph–rethink**" reasoning cycle. This iterative approach enables the model to effectively leverage graph knowledge to produce high-quality answers. 
 
@@ -87,6 +87,21 @@ nohup bash -u run_ppo.sh -p /mnt/hdd2/home/luohaoran/huggingface/Qwen/Qwen2.5-1.
 fuser -k 8001/tcp
 ```
 
+## BibTex
+
+If you find this work is helpful for your research, please cite:
+
+```bibtex
+@misc{luo2025graphr1,
+      title={Graph-R1: Incentivizing Reasoning-on-Graph Capability in LLM via Reinforcement Learning}, 
+      author={Haoran Luo},
+      year={2025},
+      organization = {GitHub},
+      url={https://github.com/LHRLAB/Graph-R1}, 
+}
+```
+
+For further questions, please contact: luohaoran@bupt.edu.cn.
 
 ## Acknowledgement
 
