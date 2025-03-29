@@ -2,6 +2,8 @@
 
 ![](figs/1.png)
 
+### Overview
+
 Recently, the **GraphRAG** method effectively addresses the data silos issue, significantly enhancing knowledge retrieval efficiency. Nevertheless, the disconnect between graph-structured knowledge and language modalities continues to constrain performance. 
 
 To bridge this gap, we propose **Graph-R1**, an **end-to-end reinforcement learning (RL)** framework designed to improve **reasoning-on-graph capabilities** of large language models (LLMs). 
