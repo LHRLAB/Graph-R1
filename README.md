@@ -75,7 +75,7 @@ python script_process.py --data_source 2WikiMultiHopQA
 ```bash
 nohup python -u script_build.py --data_source 2WikiMultiHopQA > result_build_2WikiMultiHopQA.log 2>&1 &
 ```
-> You can also skip this step, download the pre-built Knowledge HyperGraph from [TeraBox](), and set in `expr/`.
+> You can also skip this step, download the pre-built Knowledge HyperGraph from [TeraBox](https://1024terabox.com/s/1Gw33J0oY_Yz2iKj9MkouOw), and set in `expr/`.
 
 #### 3. Set up retrieve server at 8001 port
 ```bash
