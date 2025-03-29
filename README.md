@@ -1,7 +1,7 @@
 # Graph-R1: Incentivizing Reasoning-on-Graph Capability in LLM via Reinforcement Learning
 
 <div align="center">
-  <img src="figs/1.png" width="95%"/>
+  <img src="figs/1.png" width="90%"/>
 </div>
 
 ### Overview
