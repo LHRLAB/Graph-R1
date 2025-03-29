@@ -1,4 +1,4 @@
-# Graph-R1
+# Graph-R1: When GraphRAG Meets RL
 
 Graph-R1: Incentivizing Reasoning-on-Graph Capability in LLM via Reinforcement Learning
 
