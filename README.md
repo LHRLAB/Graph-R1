@@ -1,10 +1,10 @@
 # Graph-R1: Incentivizing Reasoning-on-Graph Capability in LLM via Reinforcement Learning
 
+### Overview
+
 <div align="center">
   <img src="figs/1.png" width="90%"/>
 </div>
-
-### Overview
 
 Recently, the **GraphRAG** method effectively addresses the data silos issue, significantly enhancing knowledge retrieval efficiency. Nevertheless, the disconnect between graph-structured knowledge and language modalities continues to constrain performance. 
 
