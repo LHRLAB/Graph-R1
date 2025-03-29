@@ -62,7 +62,7 @@ pip3 install -r requirements.txt
 ```
 
 ### Dataset Preparation
-> We conduct experiments on seven datasets: 2WikiMultiHopQA, HotpotQA, Musique, NarrativeQA, NQ, PopQA, and TriviaQA. You can download them from [TeraBox](), and set the data path in `datasets/`.
+> We conduct experiments on seven datasets: 2WikiMultiHopQA, HotpotQA, Musique, NarrativeQA, NQ, PopQA, and TriviaQA. You can download them from [TeraBox](https://1024terabox.com/s/16fP1tqzzF1jPr_0bHIS2Ow), and set the data path in `datasets/`.
 
 ### Quick Start: Graph-R1 on 2WikiMultiHopQA
 #### 1. Preprocess 2WikiMultiHopQA dataset to parquet format
