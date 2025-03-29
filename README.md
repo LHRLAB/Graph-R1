@@ -92,7 +92,7 @@ nohup bash -u run_rpp.sh -p Qwen/Qwen2.5-1.5B-Instruct -m Qwen2.5-1.5B-Instruct 
 nohup bash -u run_ppo.sh -p Qwen/Qwen2.5-1.5B-Instruct -m Qwen2.5-1.5B-Instruct -d 2WikiMultiHopQA > result_run_Qwen2.5-1.5B-Instruct_2WikiMultiHopQA_ppo.log 2>&1 &
 ```
 
-#### 5. Close search server 8001 port
+#### 5. Close retrieve server 8001 port
 ```bash
 fuser -k 8001/tcp
 ```
