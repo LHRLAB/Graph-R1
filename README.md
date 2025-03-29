@@ -21,7 +21,7 @@ By integrating structured knowledge into LLM reasoning more flexibly via reinfor
   </tr>
 </table>
 
-**Results on Different RAG Datasets:**
+**Results on Different GraphRAG Datasets:**
 <table>
   <tr>
     <td><img src="./figs/2_f1.png" width="100%"/></td>
