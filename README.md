@@ -1,6 +1,6 @@
 # Graph-R1: Incentivizing Reasoning-on-Graph Capability in LLM via Reinforcement Learning
 
-### Overview
+## Overview
 
 <div align="center">
   <img src="figs/1.png" width="90%"/>
@@ -16,7 +16,7 @@ By integrating structured knowledge into LLM reasoning more flexibly via reinfor
 
 **Our paper is coming soon.**
 
-### Experimental Results
+## Experimental Results
 **Results on Different RL Algorithms:**
 <table>
   <tr>
@@ -46,6 +46,8 @@ By integrating structured knowledge into LLM reasoning more flexibly via reinfor
     <td><img src="./figs/3_turn.png" width="100%"/></td>
   </tr>
 </table>
+
+## Graph-R1 Implementation
 
 ### Install Environment
 ```bash
