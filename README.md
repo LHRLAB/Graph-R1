@@ -1,6 +1,6 @@
 # Graph-R1: Incentivizing Reasoning-on-Graph Capability in LLM via Reinforcement Learning
 
-### Overview
+![](figs/1.png)
 
 Recently, the **GraphRAG** method effectively addresses the data silos issue, significantly enhancing knowledge retrieval efficiency. Nevertheless, the disconnect between graph-structured knowledge and language modalities continues to constrain performance. 
 
@@ -9,6 +9,8 @@ To bridge this gap, we propose **Graph-R1**, an **end-to-end reinforcement learn
 Specifically, we constructs a **knowledge hypergraph** using **n-ary relation extraction** from [HyperGraphRAG](https://github.com/LHRLAB/HyperGraphRAG). We then employ an explicit reward mechanism within RL, enabling the LLM to iteratively execute a "**think–generate query–retrieve subgraph–rethink**" reasoning cycle. This iterative approach enables the model to effectively leverage graph knowledge to produce high-quality answers. 
 
 By integrating structured knowledge into LLM reasoning more flexibly via reinforcement learning, Graph-R1 holds promise for aplications in **knowledge-intensive fields** such as healthcare, finance, and law.
+
+**Our paper is coming soon.**
 
 ### Experimental Results
 **Results on Different RL Algorithms:**
