@@ -1,6 +1,6 @@
 # Graph-R1
 
-**Graph-R1: Incentivizing Reasoning-on-Graph Capability in LLM via Reinforcement Learning**
+Graph-R1: Incentivizing Reasoning-on-Graph Capability in LLM via Reinforcement Learning
 
 ## Overview
 
