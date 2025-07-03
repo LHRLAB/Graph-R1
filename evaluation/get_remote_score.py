@@ -134,7 +134,7 @@ def evaluate_method(args):
 
 if __name__ == "__main__":
     parse = argparse.ArgumentParser()
-    parse.add_argument('--dir', type=str, default='/mnt/hdd2/home/luohaoran/github/Graph-R1-temp/expr_results/Qwen2.5-3B-Instruct_2WikiMultiHopQA_grpo')
+    parse.add_argument('--dir', type=str, default='../expr_results/Qwen2.5-3B-Instruct_2WikiMultiHopQA_grpo')
 
     args = parse.parse_args()
     evaluate_method(args)
