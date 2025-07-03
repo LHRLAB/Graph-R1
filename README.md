@@ -127,8 +127,8 @@ fuser -k 8001/tcp
 > For evaluation, please refer to the [evaluation](./evaluation/README.md) folder.
 
 
-### Inference
-> For inference, please refer to the [inference](./inference/README.md) folder.
+<!-- ### Inference
+> For inference, please refer to the [inference](./inference/README.md) folder. -->
 
 
 ## BibTex
