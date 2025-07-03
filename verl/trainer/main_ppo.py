@@ -45,6 +45,7 @@ class RewardManager():
         answer_lst_f1 = []
         answer_lst_em = []
         format_lst = []
+        result_lst = []
 
         already_print_data_sources = {}
 
@@ -85,6 +86,7 @@ class RewardManager():
             answer_lst_f1.append(answer_f1_score)
             answer_lst_em.append(answer_em_score)
             format_lst.append(format_score)
+            result_lst.append(sequences_str)
 
             reward_tensor[i, valid_response_length - 1] = score
 
@@ -94,7 +96,7 @@ class RewardManager():
             if already_print_data_sources[data_source] < self.num_examine:
                 already_print_data_sources[data_source] += 1
 
-        return reward_tensor, answer_lst_f1, answer_lst_em, format_lst
+        return reward_tensor, answer_lst_f1, answer_lst_em, format_lst, result_lst
     
 
 

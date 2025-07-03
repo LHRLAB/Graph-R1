@@ -717,7 +717,7 @@ class RayPPOTrainer(object):
     #         metric_dict[f'val/test_score/{data_source}'] = np.mean(rewards)
 
     #     return metric_dict
-
+        
     def _validate(self):
         """
         The training loop of PPO with global metric computation.
@@ -727,6 +727,7 @@ class RayPPOTrainer(object):
         reward_tensor_lst = []
         turns_lst = []
         data_source_lst = []
+        result_list = []
 
         gen_config = ToolGenerationConfig(
             max_turns=self.config.tool.max_turns,
@@ -782,7 +783,7 @@ class RayPPOTrainer(object):
                 
                 # evaluate using reward_function
                 try:
-                    reward_tensor, answer_lst_f1, answer_lst_em , format_lst = self.val_reward_fn(test_batch)
+                    reward_tensor, answer_lst_f1, answer_lst_em , format_lst, result_lst = self.val_reward_fn(test_batch)
                 except:
                     print(f"[Error] Something wrong with the reward function")
                     print(test_batch)
@@ -791,6 +792,30 @@ class RayPPOTrainer(object):
                 reward_tensor_lst.append(reward_tensor)
                 turns_lst.append(test_batch.batch['turns'])
                 data_source_lst.append(test_batch.non_tensor_batch.get('data_source', ['unknown'] * reward_tensor.shape[0]))
+                
+                result_lst = [
+                   {
+                       "question": batch_dict['extra_info'][i]['question'],
+                       "golden_answers": list(batch_dict['extra_info'][i]['answer']),
+                       "context": list(batch_dict['context'][i]),
+                       "prediction": result,
+                       "answer_f1_score": answer_lst_f1[i],
+                       "answer_em_score": answer_lst_em[i],
+                       "format_score": format_lst[i],
+                       "turns": int(test_batch.batch['turns'][i]),
+                    }
+                   for i, result in enumerate(result_lst) 
+                ]
+                result_list.extend(result_lst)
+        
+        # save the results to a file
+        result_save_file = f'expr_results/{self.config.trainer.experiment_name}/results_step{self.global_steps}.json'
+        if os.path.exists(result_save_file):
+            os.remove(result_save_file)
+        os.makedirs(os.path.dirname(result_save_file), exist_ok=True)
+        with open(result_save_file, 'w') as f:
+            json.dump(result_list, f, indent=4)
+            print(f"[Save] Results saved to {result_save_file}")
 
         reward_tensor = torch.cat([rw.sum(-1) for rw in reward_tensor_lst], dim=0).cpu()  # (batch_size,)
         turns_tensor = torch.cat(turns_lst, dim=0).cpu()
@@ -832,6 +857,16 @@ class RayPPOTrainer(object):
             metric_dict[f'val/format_score/{data_source}'] = np.mean(formats)
         for data_source, turns in data_source_turns.items():
             metric_dict[f'val/turns/{data_source}'] = np.mean(turns)
+            
+        # save the results to a file
+        result_save_file = f'expr_results/{self.config.trainer.experiment_name}/evals_step{self.global_steps}.json'
+        if os.path.exists(result_save_file):
+            os.remove(result_save_file)
+        os.makedirs(os.path.dirname(result_save_file), exist_ok=True)
+        with open(result_save_file, 'w') as f:
+            json.dump(metric_dict, f, indent=4)
+            print(f"[Save] Evals saved to {result_save_file}")
+        
         return metric_dict
 
     def init_workers(self):
@@ -1003,6 +1038,23 @@ class RayPPOTrainer(object):
                                                     partitions=global_partition_lst,
                                                     prefix=logging_prefix)
         metrics.update(global_balance_stats)
+        
+    def record(self, metric_dict, global_steps):
+        # save the results to a file
+        result_save_file = f'expr_results/{self.config.trainer.experiment_name}/evals_training.jsonl'
+        os.makedirs(os.path.dirname(result_save_file), exist_ok=True)
+        if os.path.exists(result_save_file):
+            if global_steps == 1:
+                # # 读取现有文件内容
+                # with open(result_save_file, 'r') as f:
+                #     existing_data = json.load(f)
+                os.remove(result_save_file)
+        # 存储到jsonl的一行
+        with open(result_save_file, 'a') as f:
+            metric_dict['global_steps'] = global_steps
+            json.dump(metric_dict, f)
+            f.write('\n')
+            print(f"[Save] Evals saved to {result_save_file}")
 
     def fit(self):
         """
@@ -1154,7 +1206,7 @@ class RayPPOTrainer(object):
                             batch = batch.union(reward_tensor)
 
                         # we combine with rule-based rm
-                        reward_tensor, answer_lst_f1, answer_lst_em, format_lst = self.reward_fn(batch)
+                        reward_tensor, answer_lst_f1, answer_lst_em, format_lst, _ = self.reward_fn(batch)
                         batch.batch['token_level_scores'] = reward_tensor
                         batch.batch['answer_f1_scores'] = torch.tensor(answer_lst_f1)
                         batch.batch['answer_em_scores'] = torch.tensor(answer_lst_em)
@@ -1210,6 +1262,8 @@ class RayPPOTrainer(object):
 
                 # TODO: make a canonical logger that supports various backend
                 logger.log(data=metrics, step=self.global_steps)
+                # record metrics
+                self.record(metric_dict=metrics, global_steps=self.global_steps)
 
                 self.global_steps += 1
 
@@ -1220,10 +1274,10 @@ class RayPPOTrainer(object):
                         val_metrics = self._validate()
                         pprint(f'Final validation metrics: {val_metrics}')
                         logger.log(data=val_metrics, step=self.global_steps)
-                    if self.config.trainer.save_freq > 0 and \
-                            (self.global_steps - 1) % self.config.trainer.save_freq != 0:
-                        with _timer('save_checkpoint', timing_raw):
-                            self._save_checkpoint()
+                    # if self.config.trainer.save_freq > 0 and \
+                    #         (self.global_steps - 1) % self.config.trainer.save_freq != 0:
+                    with _timer('save_checkpoint', timing_raw):
+                        self._save_checkpoint()
                     return
 
     def _create_loss_mask(self, batch: DataProto, metrics: dict) -> Tuple[DataProto, dict]:
