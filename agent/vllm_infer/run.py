@@ -2,8 +2,10 @@ import argparse
 import json
 from openai import OpenAI
 
-from agent.tool.tool_env import ToolEnv
+from agent.tool.tool_env import ToolEnv, step_batch
 from agent.tool.tools import _default_tools
+import re
+import copy
 
 # ANSI color codes for colored output
 COLORS = {
@@ -32,13 +34,100 @@ def parse_args():
                         help='Top-p for nucleus sampling')
     parser.add_argument('--max-tokens', type=int, default=4096,
                         help='Maximum number of tokens to generate')
-    parser.add_argument('--max-turns', type=int, default=10,
+    parser.add_argument('--max-turns', type=int, default=20,
                         help='Maximum turns of search')
-    parser.add_argument('--question', type=str, default="Which film has the director died first, Watch Your Stern or Requiescant?",
+    parser.add_argument('--question', type=str, default="Which film has the director died earlier, Nameless Woman or Handle With Care (1977 Film)?",
                         help='Question to ask the model')
     parser.add_argument('--no-color', action='store_true',
                         help='Disable colored output')
     return parser.parse_args()
+
+def process_tool_call(responses_str):
+
+    def process_single_response(resp):
+        eos_token = "<|im_end|>"
+        tool_call_end ="</query>"
+        tool_pattern = r'<query>(.*?)</query>'
+        match = re.search(tool_pattern, resp, re.DOTALL)
+        
+        if not match:
+            return resp + eos_token, False  # No tool call found
+        
+        resp = resp.split(tool_call_end)[0] + tool_call_end
+        
+        return resp + eos_token, True
+    
+    # Process each response string
+    return [process_single_response(resp)[0] for resp in responses_str], [process_single_response(resp)[1] for resp in responses_str]
+
+def execute_tool_calls_batch(response_strs, env, active_masks):
+    tool_custom_response_template = "<|im_start|>user\n<knowledge>\n{tool_response}\n</knowledge><|im_end|>\n<|im_start|>assistant\n<think>"
+    active_envs = []
+    active_responses = []
+    active_indices = []
+    
+    for i, (resp, active) in enumerate(zip(response_strs, active_masks)):
+        if active:
+            active_envs.append(env)
+            active_responses.append(resp)
+            active_indices.append(i)
+    
+    # Initialize result list with empty strings
+    tool_responses = [""] * len(response_strs)
+    
+    if not active_envs:
+        return tool_responses
+        
+    # Use the independent step_batch function for active environments
+    batch_results = step_batch(active_envs, active_responses)
+    
+    # Map results back to original indices
+    for idx, result in zip(active_indices, batch_results):
+        if result is None:
+            tool_responses[idx] = ""
+        else:
+            tool_response = result[0]
+            tool_responses[idx] = tool_custom_response_template.format(tool_response=tool_response)
+    return tool_responses
+
+def colorprint(mode, r_str, t_str, use_colors):
+    if not r_str.startswith("<think>\n"):
+        r_str = "<think>\n" + r_str
+    
+    if mode is True:
+        think = re.findall(r'<think>(.*?)</think>', r_str, re.DOTALL)[0]
+        if not think.endswith("\n"):
+            think += "\n"
+        query = re.findall(r'<query>\n{\n  "query": "(.*?)"\n}\n</query>', r_str, re.DOTALL)[0]
+        knowledge = re.findall(r'<knowledge>(.*?)</knowledge>', t_str, re.DOTALL)[0]
+        knowledge_list = json.loads(knowledge)['results']
+        knowledge = "\n"
+        for k in knowledge_list:
+            knowledge += str(k) + "\n"
+        
+        if use_colors:
+            print(f"\n{COLORS['bg_tool_call']} Think {COLORS['reset']} {COLORS['tool_call']}{think}{COLORS['reset']}")
+            print(f"{COLORS['tool_call']}Query:{COLORS['reset']}\n{query}{COLORS['reset']}")
+            print(f"\n{COLORS['bg_tool']} Knowledge {COLORS['reset']} {COLORS['tool']}{knowledge}{COLORS['reset']}")
+        else:
+            print(f"\n[Think] {think}")
+            print(f"Query:\n{query}")
+            print(f"\nKnowledge: {knowledge}") 
+    else:
+        think = re.findall(r'<think>(.*?)</think>', r_str, re.DOTALL)[0]
+        if not think.endswith("\n"):
+            think += "\n"
+
+        answer = re.findall(r'<answer>\n(.*?)\n</answer>', r_str, re.DOTALL)[0]
+        
+        if use_colors:
+            print(f"\n{COLORS['bg_tool_call']} Think {COLORS['reset']} {COLORS['tool_call']}{think}{COLORS['reset']}")
+            print(f"{COLORS['tool_call']}Answer:{COLORS['reset']}\n{answer}{COLORS['reset']}")
+        else:
+            print(f"\n[Think] {think}")
+            print(f"Answer:\n{answer}")
+            
+        print("\n")
 
 def main():
     args = parse_args()
@@ -73,87 +162,44 @@ def main():
         print(f"{COLORS['bg_user']} User {COLORS['reset']} {COLORS['user']}{question_raw}{COLORS['reset']}")
     else:
         print(f"User: {question_raw}")
+        
     
     # Run inference loop
-    while True:
-        response = client.chat.completions.create(
-            model=MODEL_NAME,
-            messages=messages,
-            temperature=TEMPERATURE,
-            top_p=TOP_P,
-            max_tokens=MAX_TOKENS,
-        )
-        
-        # Get the response message
-        response_message = response.choices[0].message
-        
-        # Format the assistant's message properly
-        assistant_message = {
-            "role": "assistant",
-            "content": response_message.content
-        }
-        
-        # Add tool calls if any
-        if response_message.tool_calls:
-            assistant_message["tool_calls"] = [
-                {
-                    "id": tool_call.id,
-                    "type": tool_call.type,
-                    "function": {
-                        "name": tool_call.function.name,
-                        "arguments": tool_call.function.arguments
-                    }
-                }
-                for tool_call in response_message.tool_calls
-            ]
-        
-        # Add the formatted message to the conversation
-        messages.append(assistant_message)
-        
-        # Display assistant's response with color
-        if use_colors:
-            print(f"\n{COLORS['bg_assistant']} Assistant {COLORS['reset']} {COLORS['assistant']}{response_message.content}{COLORS['reset']}")
-        else:
-            print(f"\nAssistant: {response_message.content}")
-        
-        # Check if there are any tool calls
-        if response_message.tool_calls:
-            # Process each tool call
-            for tool_call in response_message.tool_calls:
-                # Pretty format the arguments for better readability
-                try:
-                    args_dict = json.loads(tool_call.function.arguments)
-                    formatted_args = json.dumps(args_dict, indent=2)
-                except json.JSONDecodeError:
-                    formatted_args = tool_call.function.arguments
-                
-                # Log function call details with color
-                if use_colors:
-                    print(f"\n{COLORS['bg_tool_call']} Tool Call {COLORS['reset']} {COLORS['tool_call']}Function: {tool_call.function.name}{COLORS['reset']}")
-                    print(f"{COLORS['tool_call']}Arguments:{COLORS['reset']}\n{formatted_args}")
-                else:
-                    print(f"\n[Tool Call] Function: {tool_call.function.name}")
-                    print(f"Arguments:\n{formatted_args}")
-                
-                # Execute the tool
-                result = env.tool_map[tool_call.function.name].execute(json.loads(tool_call.function.arguments))
-                result = result["content"]
-                
-                # Display tool result with color
-                if use_colors:
-                    print(f"\n{COLORS['bg_tool']} Tool {COLORS['reset']} {COLORS['tool']}{result}{COLORS['reset']}")
-                else:
-                    print(f"\nTool: {result}")
-                
-                # Add tool result to messages
-                messages.append({
-                    "role": "tool",
-                    "content": result,
-                    "tool_call_id": tool_call.id
-                })
-        else:
-            # No tool calls, we have reached the final answer
-            break
+    for step in range(MAX_TURNS):
+        try:
+            response = client.chat.completions.create(
+                model=MODEL_NAME,
+                messages=messages,
+                temperature=TEMPERATURE,
+                top_p=TOP_P,
+                max_tokens=MAX_TOKENS,
+            )
+            
+            # Get the response message
+            response_message = response.choices[0].message
+            responses_str = [response_message.content]
+            
+            responses_str, active_masks = process_tool_call(responses_str)
+            
+            tool_responses = execute_tool_calls_batch(responses_str, env, active_masks)
+
+            colorprint(active_masks[0], copy.deepcopy(responses_str[0]), copy.deepcopy(tool_responses[0]), use_colors)
+            
+            if active_masks[0] is True:
+                prompt = messages[0]["content"]+responses_str[0]+tool_responses[0]
+                messages = [{
+                    "role": "user",
+                    "content": prompt
+                }] 
+                # print(messages[0]["content"])
+            else:
+                prompt = messages[0]["content"]+responses_str[0]
+                # print(prompt)
+                break
+
+        except:
+            # print("Aha...")
+            continue
 
 if __name__ == "__main__":
     main() 
