@@ -2,18 +2,19 @@
 
 Graph-R1: Agentic GraphRAG Framework via End-to-end Reinforcement Learning
 
+<div align="center">
+  <img src="figs/F1.png" width="100%"/>
+</div>
+
 ## Overview
 
-<div align="center">
-  <img src="figs/F1.png" width="80%"/>
-</div>
 
 Recently, the **GraphRAG** method effectively addresses the data silos issue, significantly enhancing knowledge retrieval efficiency. Nevertheless, the disconnect between graph-structured knowledge and language modalities continues to constrain performance. 
 
 To bridge this gap, we propose **Graph-R1**, an **end-to-end reinforcement learning (RL)** framework designed to improve **reasoning-on-graph capabilities** of large language models (LLMs). 
 
 <div align="center">
-  <img src="figs/F2.png" width="90%"/>
+  <img src="figs/F2.png" width="100%"/>
 </div>
 
 Specifically, we constructs a **knowledge hypergraph** using **n-ary relation extraction**. We then employ an explicit reward mechanism within RL, enabling the LLM to iteratively execute a "**think–generate query–retrieve subgraph–rethink**" reasoning cycle. This iterative approach enables the model to effectively leverage graph knowledge to produce high-quality answers. 
