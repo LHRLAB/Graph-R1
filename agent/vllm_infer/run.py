@@ -36,7 +36,7 @@ def parse_args():
                         help='Maximum number of tokens to generate')
     parser.add_argument('--max-turns', type=int, default=20,
                         help='Maximum turns of search')
-    parser.add_argument('--question', type=str, default="Which film has the director died earlier, Nameless Woman or Handle With Care (1977 Film)?",
+    parser.add_argument('--question', type=str, default="Which magazine came out first, Tit-Bits or Illustreret Nyhedsblad?",
                         help='Question to ask the model')
     parser.add_argument('--no-color', action='store_true',
                         help='Disable colored output')

@@ -20,7 +20,7 @@ nohup python -u script_api.py --data_source 2WikiMultiHopQA > result_api_2WikiMu
 
 #### 4. Now, you can run the inference script to ask questions.
 ```bash
-python3 agent/vllm_infer/run.py --question "Which film has the director died earlier, Nameless Woman or Handle With Care (1977 Film)?"
+python3 agent/vllm_infer/run.py --question "Which magazine came out first, Tit-Bits or Illustreret Nyhedsblad?"
 ```
 
 #### 5. When you finish the inference, you can stop the vLLM and retrieve server by killing port 8002 and 8001.
@@ -28,3 +28,9 @@ python3 agent/vllm_infer/run.py --question "Which film has the director died ear
 pkill -TERM -P $(lsof -t -i :8002); kill -9 $(lsof -t -i :8002)
 fuser -k 8001/tcp
 ```
+
+## Example
+
+<div align="center">
+  <img src="example.png" width="100%"/>
+</div>
