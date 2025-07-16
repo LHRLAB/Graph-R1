@@ -1,6 +1,6 @@
 # Graph-R1: When GraphRAG Meets RL
 
-Graph-R1: Agentic GraphRAG Framework via End-to-end Reinforcement Learning
+Graph-R1: Towards Agentic GraphRAG Framework via End-to-end Reinforcement Learning
 
 ## Overview
 
