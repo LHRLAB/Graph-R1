@@ -137,7 +137,7 @@ If you find this work is helpful for your research, please cite:
 
 ```bibtex
 @misc{luo2025graphr1,
-      title={Graph-R1: Agentic GraphRAG Framework via End-to-end Reinforcement Learning}, 
+      title={Graph-R1: Towards Agentic GraphRAG Framework via End-to-end Reinforcement Learning}, 
       author={Haoran Luo},
       year={2025},
       organization = {GitHub},
