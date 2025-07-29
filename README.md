@@ -145,7 +145,7 @@ If you find this work is helpful for your research, please cite:
 }
 ```
 
-For further questions, please contact: luohaoran@bupt.edu.cn.
+For further questions, please contact: haoran-luo@outlook.com.
 
 ## Acknowledgement
 
