@@ -1,6 +1,6 @@
 # Graph-R1: When GraphRAG Meets RL
 
-Graph-R1: Towards Agentic GraphRAG Framework via End-to-end Reinforcement Learning
+Graph-R1: Towards Agentic GraphRAG Framework via End-to-end Reinforcement Learning [[paper](https://arxiv.org/abs/2507.21892)]
 
 ## Overview
 
@@ -138,10 +138,12 @@ If you find this work is helpful for your research, please cite:
 ```bibtex
 @misc{luo2025graphr1,
       title={Graph-R1: Towards Agentic GraphRAG Framework via End-to-end Reinforcement Learning}, 
-      author={Haoran Luo},
+      author={Haoran Luo and Haihong E and Guanting Chen and Qika Lin and Yikai Guo and Fangzhi Xu and Zemin Kuang and Meina Song and Xiaobao Wu and Yifan Zhu and Luu Anh Tuan},
       year={2025},
-      organization = {GitHub},
-      url={https://github.com/LHRLAB/Graph-R1}, 
+      eprint={2507.21892},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2507.21892}, 
 }
 ```
 
