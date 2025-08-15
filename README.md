@@ -2,7 +2,6 @@
 
 Graph-R1: Towards Agentic GraphRAG Framework via End-to-end Reinforcement Learning [[paper](https://arxiv.org/abs/2507.21892)]
 
-
 ## Overview
 
 <div align="center">
