@@ -67,7 +67,7 @@ pip3 install -r requirements.txt
 ```
 
 ### Dataset Preparation
-> We conduct experiments on six datasets: 2WikiMultiHopQA, HotpotQA, Musique, NQ, PopQA, and TriviaQA. You can download them from [TeraBox](https://1024terabox.com/s/1wvopC4wO60nLzcc96HnSOg), and set the data path in `datasets/`.
+> We conduct experiments on six datasets: 2WikiMultiHopQA, HotpotQA, Musique, NQ, PopQA, and TriviaQA. You can download them from [TeraBox](https://1024terabox.com/s/12FXnOnOhOZNyGzjWuoo-qg), and set the data path in `datasets/`.
 
 ### Quick Start: Graph-R1 on 2WikiMultiHopQA
 #### 1. Preprocess 2WikiMultiHopQA dataset to parquet format
@@ -90,7 +90,7 @@ nohup python -u script_build.py --data_source 2WikiMultiHopQA > result_build_2Wi
 # nohup python -u script_build.py --data_source PopQA > result_build_PopQA.log 2>&1 &
 # nohup python -u script_build.py --data_source TriviaQA > result_build_TriviaQA.log 2>&1 &
 ```
-> You can also skip this step, download the pre-built Knowledge HyperGraph from [TeraBox](https://1024terabox.com/s/1SZaGxO1VWD2YGWnYSIJFuA), and set in `expr/`.
+> You can also skip this step, download the pre-built Knowledge HyperGraph from [TeraBox](https://1024terabox.com/s/1y1G7trP-hcmIDQRUaBaDDw), and set in `expr/`.
 
 #### 3. Set up retrieve server at 8001 port
 ```bash
