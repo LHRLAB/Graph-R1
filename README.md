@@ -1,6 +1,6 @@
 # Graph-R1: When GraphRAG Meets RL
 
-Official resources of **"Graph-R1: Towards Agentic GraphRAG Framework via End-to-end Reinforcement Learning"**. Haoran Luo, Haihong E, Guanting Chen, Qika Lin, Yikai Guo, Fangzhi Xu, Zemin Kuang, Meina Song, Xiaobao Wu, Yifan Zhu, Luu Anh Tuan. **ICML 2026** \[[paper](https://arxiv.org/abs/2507.21892)\].
+Official resources of **"Graph-R1: Towards Agentic GraphRAG Framework via End-to-end Reinforcement Learning"**. Haoran Luo, Haihong E, Guanting Chen, Qika Lin, Yikai Guo, Fangzhi Xu, Zemin Kuang, Meina Song, Xiaobao Wu, Yifan Zhu, Luu Anh Tuan. **ICML 2026** \[[paper](https://proceedings.mlr.press/v306/luo26c.html)\].
 
 ## Overview
 
