@@ -134,14 +134,20 @@ fuser -k 8001/tcp
 If you find this work is helpful for your research, please cite:
 
 ```bibtex
-@misc{luo2025graphr1,
-      title={Graph-R1: Towards Agentic GraphRAG Framework via End-to-end Reinforcement Learning}, 
-      author={Haoran Luo and Haihong E and Guanting Chen and Qika Lin and Yikai Guo and Fangzhi Xu and Zemin Kuang and Meina Song and Xiaobao Wu and Yifan Zhu and Luu Anh Tuan},
-      year={2025},
-      eprint={2507.21892},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2507.21892}, 
+@InProceedings{luo2026graphr1,
+  title = 	 {Graph-R1: Towards Agentic {G}raph{RAG} Framework via End-to-end Reinforcement Learning},
+  author =       {Luo, Haoran and E, Haihong and Chen, Guanting and Lin, Qika and Guo, Yikai and Xu, Fangzhi and Kuang, Zemin and Song, Meina and Wu, Xiaobao and Zhu, Yifan and Luu, Anh Tuan},
+  booktitle = 	 {Proceedings of the 43rd International Conference on Machine Learning},
+  pages = 	 {82220--82240},
+  year = 	 {2026},
+  editor = 	 {Zhang, Tong and Dudik, Miroslav and Jaggi, Martin and Agarwal, Alekh and Li, Sharon and Schuurmans, Dale and Zhu, Jerry and Berkenkamp, Felix and Dong, Hanze and Bietti, Alberto},
+  volume = 	 {306},
+  series = 	 {Proceedings of Machine Learning Research},
+  month = 	 {06--11 Jul},
+  publisher =    {PMLR},
+  pdf = 	 {https://raw.githubusercontent.com/mlresearch/v306/main/assets/luo26c/luo26c.pdf},
+  url = 	 {https://proceedings.mlr.press/v306/luo26c.html},
+  abstract = 	 {Retrieval-Augmented Generation (RAG) mitigates hallucination in LLMs by incorporating external knowledge, but relies on chunk-based retrieval that lacks structural semantics. GraphRAG methods improve RAG by modeling knowledge as entity-relation graphs, but still face challenges in high construction cost, fixed one-time retrieval, and reliance on long-context reasoning and prompt design. To address these challenges, we propose Graph-R1, the first agentic GraphRAG framework via end-to-end reinforcement learning (RL). It introduces lightweight knowledge hypergraph construction, models retrieval as a multi-turn agent-environment interaction, and optimizes the agent process via an end-to-end reward mechanism. Experiments on standard RAG datasets show that Graph-R1 outperforms traditional GraphRAG and RL-enhanced RAG methods in reasoning accuracy, retrieval efficiency, and generation quality. Our software and data are publicly available.}
 }
 ```
 
